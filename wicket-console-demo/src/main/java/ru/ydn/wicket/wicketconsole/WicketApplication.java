@@ -1,4 +1,4 @@
-package ru.ydn.wicket.wicket-console;
+package ru.ydn.wicket.wicketconsole;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;

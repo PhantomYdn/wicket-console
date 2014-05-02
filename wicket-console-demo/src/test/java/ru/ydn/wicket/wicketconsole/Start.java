@@ -1,4 +1,4 @@
-package ru.ydn.wicket.wicket-console;
+package ru.ydn.wicket.wicketconsole;
 
 import org.apache.wicket.util.time.Duration;
 import org.eclipse.jetty.server.Server;

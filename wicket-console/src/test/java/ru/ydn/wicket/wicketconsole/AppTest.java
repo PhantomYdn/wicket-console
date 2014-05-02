@@ -1,4 +1,4 @@
-package ru.ydn.wicket.wicket-console;
+package ru.ydn.wicket.wicketconsole;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
