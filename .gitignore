@@ -8,3 +8,4 @@ release.properties
 .classpath
 .project
 .settings/
+build.cmd
