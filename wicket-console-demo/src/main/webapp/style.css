@@ -40,7 +40,7 @@ body { margin-top : 0; padding-top : 0;}
 #bd {
 	position : absolute;
 	top : 75px;
-	bottom : 75px;
+	/*bottom : 75px;*/
 	left : 50%;
 	margin-left : -325px;
 	z-index : 1;

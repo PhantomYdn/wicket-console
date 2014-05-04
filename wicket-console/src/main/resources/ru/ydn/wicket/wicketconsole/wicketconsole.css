@@ -1,0 +1,61 @@
+table.wc-panel
+{
+	width: 100%;
+}
+
+.wc-item
+{
+	border-bottom: 1px solid black;
+}
+
+div.wc-item-script
+{
+	font-weight: bold;
+}
+
+div.wc-item-script:BEFORE
+{
+	content: "<<: ";
+}
+
+div.wc-item-out
+{
+	color: green;
+}
+
+div.wc-item-out:BEFORE
+{
+	content: "Out: ";
+}
+
+
+div.wc-item-err
+{
+	color: red;
+}
+
+div.wc-item-err:BEFORE
+{
+	content: "Err: ";
+}
+
+
+div.wc-item-return
+{
+	
+}
+
+div.wc-item-return:BEFORE
+{
+	content: ">>: ";
+}
+div.wc-item-exception
+{
+	color: red;
+}
+
+textarea.wc-script
+{
+	width: 100%;
+	height: 10em;
+}

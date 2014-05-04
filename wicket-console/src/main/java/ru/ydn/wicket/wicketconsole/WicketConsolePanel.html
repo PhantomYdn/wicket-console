@@ -2,25 +2,29 @@
 <body>
 <wicket:panel>
 	<form wicket:id="form">
-		<table>
+		<table class="wc-panel">
 		<thead>
 			<tr>
 				<th><wicket:message key="wc.panel.title">Wicket Console</wicket:message></th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr wicket:id="history">
+			<tr wicket:id="history" class="wc-history">
 				<td wicket:id="item"></td>
 			</tr>
 		</tbody>
 		<tfoot>
 			<tr>
 				<td>
-					<textarea wicket:id="script"></textarea>
+					<textarea wicket:id="script" class="wc-script"></textarea>
 				</td>
 			</tr>
 			<tr>
-				<td><input type="submit" value="Submit" wicket:id="submit" wicket:message="value:wc.submit"></td>
+				<td>
+					<input type="checkbox" wicket:id="keepScript"><label wicket:for="keepScript"><wicket:message key="wc.keepScript">Keep Script</wicket:message></label>
+					<input type="submit" value="Submit" wicket:id="submit" wicket:message="value:wc.submit">
+					<input type="submit" value="Submit" wicket:id="clearHistory" wicket:message="value:wc.clearHistory">
+				</td>
 			</tr>
 		</tfoot>
 		</table>
