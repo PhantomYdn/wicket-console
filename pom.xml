@@ -20,8 +20,95 @@
         <system>github</system>
         <url>https://github.com/PhantomYdn/wicket-console/issues</url>
     </issueManagement>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<repositories>
+		<repository>
+			<id>Apache Nexus</id>
+			<url>https://repository.apache.org/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+			</snapshots>
+		</repository>
+	</repositories>
+	<properties>
+		<wicket.version>6.15.0</wicket.version>
+		<jetty.version>7.6.13.v20130916</jetty.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
+		<wtp.version>none</wtp.version>
+	</properties>
   <modules>
     <module>wicket-console</module>
     <module>wicket-console-demo</module>
   </modules>
+  <dependencyManagement>
+      <dependencies>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-core</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-extensions</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-devutils</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+      </dependencies>
+  </dependencyManagement>
+  <build>
+    <plugins>
+	    <plugin>
+		    <inherited>true</inherited>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-compiler-plugin</artifactId>
+		    <version>2.5.1</version>
+		    <configuration>
+			    <source>1.7</source>
+			    <target>1.7</target>
+			    <encoding>UTF-8</encoding>
+			    <showWarnings>true</showWarnings>
+			    <showDeprecation>true</showDeprecation>
+		    </configuration>
+	    </plugin>
+	    <plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-eclipse-plugin</artifactId>
+		    <version>2.9</version>
+		    <configuration>
+			    <downloadSources>true</downloadSources>
+			    <wtpversion>${wtp.version}</wtpversion>
+		    </configuration>
+	    </plugin>
+    </plugins>
+</build>
 </project>

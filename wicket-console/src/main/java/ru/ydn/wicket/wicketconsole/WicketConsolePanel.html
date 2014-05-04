@@ -1,0 +1,30 @@
+<html>
+<body>
+<wicket:panel>
+	<form wicket:id="form">
+		<table>
+		<thead>
+			<tr>
+				<th><wicket:message key="wc.panel.title">Wicket Console</wicket:message></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr wicket:id="history">
+				<td wicket:id="item"></td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td>
+					<textarea wicket:id="script"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="Submit" wicket:id="submit" wicket:message="value:wc.submit"></td>
+			</tr>
+		</tfoot>
+		</table>
+	</form>
+</wicket:panel>
+</body>
+</html>
