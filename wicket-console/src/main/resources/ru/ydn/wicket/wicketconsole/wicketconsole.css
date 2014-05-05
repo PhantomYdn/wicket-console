@@ -1,11 +1,22 @@
-table.wc-panel
+.wc-panel
 {
 	width: 100%;
+}
+
+.wc-history
+{
+	max-height: 400px;
+	overflow-y: auto;
 }
 
 .wc-item
 {
 	border-bottom: 1px solid black;
+}
+
+.wc-item p
+{
+	display: inline;
 }
 
 div.wc-item-script

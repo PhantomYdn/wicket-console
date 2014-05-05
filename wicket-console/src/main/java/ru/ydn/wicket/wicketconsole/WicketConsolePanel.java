@@ -8,6 +8,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -25,14 +26,17 @@ import org.apache.wicket.util.string.Strings;
 
 public class WicketConsolePanel extends Panel
 {
+	private IModel<String> scriptModel = Model.of("");
 	private IModel<Boolean> keepScriptModel = Model.of(false);
-
+	
+	private WebMarkupContainer historyContainer;
+	private TextArea<String> scriptTextArea;
+	
 	public WicketConsolePanel(String id)
 	{
 		super(id);
 		setOutputMarkupId(true);
-		Form<String> form =new Form<String>("form");
-		
+		Form<String> form =new Form<String>("form");		
 		IModel<List<ScriptHistoryItem>> historyModel = new LoadableDetachableModel<List<ScriptHistoryItem>>() {
 
 			@Override
@@ -40,7 +44,9 @@ public class WicketConsolePanel extends Panel
 				return ScriptExecutorHolder.get().getScriptExecutor().getHistory();
 			}
 		};
-		
+		historyContainer = new WebMarkupContainer("historyContainer");
+		historyContainer.add(ScrollToBottomBehavior.INSTANCE).setOutputMarkupId(true);
+		form.add(historyContainer);
 		ListView<ScriptHistoryItem> history = new ListView<ScriptHistoryItem>("history", historyModel) {
 			
 			@Override
@@ -48,10 +54,18 @@ public class WicketConsolePanel extends Panel
 				item.add(new HistoryItemPanel("item", item.getModel()));
 			}
 		};
-		form.add(history);
-		final TextArea<String> script = new TextArea<String>("script", Model.of(""));
-		script.setOutputMarkupId(true);
-		form.add(script);
+		historyContainer.add(history);
+		scriptTextArea = new TextArea<String>("script", scriptModel);
+		scriptTextArea.add(new CtrlEnterSubmitBehavior()
+		{
+
+			@Override
+			protected void onSubmit(AjaxRequestTarget target) {
+				onScriptExecute(target);
+			}
+			
+		}).setOutputMarkupId(true);
+		form.add(scriptTextArea);
 		form.add(new AjaxCheckBox("keepScript", keepScriptModel) {
 			
 			@Override
@@ -61,18 +75,9 @@ public class WicketConsolePanel extends Panel
 		});
 		form.add(new AjaxButton("submit")
 		{
-			
-			
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-				String commandScript = script.getModelObject();
-				if(!Strings.isEmpty(commandScript))
-				{
-					ScriptExecutorHolder.get().getScriptExecutor().execute(commandScript);
-					if(!keepScriptModel.getObject()) script.setModelObject("");
-				}
-				target.add(WicketConsolePanel.this);
-				target.focusComponent(script);
+				onScriptExecute(target);
 			}
 			
 		});
@@ -81,11 +86,11 @@ public class WicketConsolePanel extends Panel
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				ScriptExecutorHolder.get().getScriptExecutor().getHistory().clear();
-				target.add(WicketConsolePanel.this);
-				target.focusComponent(script);
+				target.add(historyContainer);
+				target.focusComponent(scriptTextArea);
 			}
 			
-		});
+		}.setDefaultFormProcessing(false));
 		add(form);
 	}
 
@@ -96,9 +101,45 @@ public class WicketConsolePanel extends Panel
 		if(cssResource!=null) response.render(cssResource);
 	}
 	
+	protected void onScriptExecute(AjaxRequestTarget target)
+	{
+		String commandScript = scriptModel.getObject();
+		if(!Strings.isEmpty(commandScript))
+		{
+			ScriptExecutorHolder.get().getScriptExecutor().execute(commandScript);
+			if(!keepScriptModel.getObject())
+			{
+				scriptModel.setObject("");
+				if(target!=null)
+				{
+					target.add(scriptTextArea);
+					target.focusComponent(scriptTextArea);
+				}
+			}
+			if(target!=null) target.add(historyContainer);
+		}
+	}
+	
 	protected HeaderItem getCSSResource()
 	{
 		return CssHeaderItem.forReference(new PackageResourceReference(WicketConsolePanel.class, "wicketconsole.css"));
+	}
+
+	public IModel<String> getScriptModel() {
+		return scriptModel;
+	}
+
+	public void setScriptModel(IModel<String> scriptModel) {
+		this.scriptModel = scriptModel;
+	}
+
+	public boolean isKeepScript() {
+		return keepScriptModel.getObject();
+	}
+
+	public WicketConsolePanel setKeepScript(boolean keepScript) {
+		this.keepScriptModel.setObject(keepScript);
+		return this;
 	}
 	
 	

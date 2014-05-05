@@ -20,27 +20,20 @@ public class ScriptExecutorHolder implements ISessionStore.BindListener, ISessio
 	private Map<String, ScriptExecutor> scriptExecutorsCache = new HashMap<String, ScriptExecutor>();
 	
 	public void sessionUnbound(String sessionId) {
-		LOG.info("Session onbound: "+sessionId);
-		System.out.println("Session onbound: "+sessionId);
 		scriptExecutorsCache.remove(sessionId);
 	}
 
 	public void bindingSession(Request request, Session newSession) {
-		LOG.info("Session binded: "+newSession.getId());
-		System.out.println("Session binded: "+newSession.getId());
 	}
 
 	public void init(Application application) {
-		LOG.info("INIT for "+application.getClass());
 		ISessionStore store = application.getSessionStore();
-		LOG.info("Session store: "+store);
 		store.registerBindListener(this);
 		store.registerUnboundListener(this);
 		application.setMetaData(SCRIPT_EXECUTOR_HOLDER, this);
 	}
 
 	public void destroy(Application application) {
-		// TODO Auto-generated method stub
 		
 	}
 	

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
@@ -12,17 +13,12 @@ import org.apache.wicket.util.string.Strings;
 
 public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 {
-	private static class HideableLabel extends Label
+	private static class HideableLabel extends MultiLineLabel
 	{
 
 		public HideableLabel(String id, IModel<?> model)
 		{
 			super(id, model);
-		}
-
-		public HideableLabel(String id, Serializable label)
-		{
-			super(id, label);
 		}
 
 		public HideableLabel(String id, String label)
