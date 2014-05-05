@@ -29,6 +29,7 @@
     <dependency>
 	    <groupId>org.apache.wicket</groupId>
 	    <artifactId>wicket-devutils</artifactId>
+	    <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
