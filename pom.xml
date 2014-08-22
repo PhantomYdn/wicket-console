@@ -1,50 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>ru.ydn.wicket.wicket-console</groupId>
-  <artifactId>wicket-console-parent</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>wicket-console-parent</name>
-    <description>Wicket console for JDK7+</description>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ru.ydn.wicket.wicket-console</groupId>
+    <artifactId>wicket-console-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>wicket-console-parent</name>
+    <description>Wicket console for JDK6+</description>
     <url>https://github.com/PhantomYdn/wicket-console</url>
 
     <scm>
-        <url>git@github.com:PhantomYdn/wicket-console.git</url>
-        <connection>scm:git:git@github.com:PhantomYdn/wicket-console.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/PhantomYdn/wicket-console.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+	<url>https://github.com/PhantomYdn/wicket-console</url>
+	<connection>scm:git:ssh://github.com/PhantomYdn/wicket-console.git</connection>
+	<developerConnection>scm:git:ssh://git@github.com/PhantomYdn/wicket-console.git</developerConnection>
+	<tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <system>github</system>
         <url>https://github.com/PhantomYdn/wicket-console/issues</url>
     </issueManagement>
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	<repositories>
-		<repository>
-			<id>Apache Nexus</id>
-			<url>https://repository.apache.org/content/repositories/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-			</snapshots>
-		</repository>
-	</repositories>
-	<properties>
-		<wicket.version>6.15.0</wicket.version>
-		<jetty.version>7.6.13.v20130916</jetty.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
-		<wtp.version>none</wtp.version>
-	</properties>
+    <distributionManagement>
+      <snapshotRepository>
+	<id>ossrh</id>
+	<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      </snapshotRepository>
+      <repository>
+	<id>ossrh</id>
+	<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      </repository>
+    </distributionManagement>
+    <licenses>
+	    <license>
+		    <name>The Apache Software License, Version 2.0</name>
+		    <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		    <distribution>repo</distribution>
+	    </license>
+    </licenses>
+    <properties>
+	<wicket.version>6.16.0</wicket.version>
+	<jetty.version>7.6.13.v20130916</jetty.version>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
+	<wtp.version>none</wtp.version>
+    </properties>
   <modules>
     <module>wicket-console</module>
     <module>wicket-console-demo</module>
@@ -87,17 +86,28 @@
   <build>
     <plugins>
 	    <plugin>
-		    <inherited>true</inherited>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-compiler-plugin</artifactId>
-		    <version>2.5.1</version>
-		    <configuration>
-			    <source>1.7</source>
-			    <target>1.7</target>
-			    <encoding>UTF-8</encoding>
-			    <showWarnings>true</showWarnings>
-			    <showDeprecation>true</showDeprecation>
-		    </configuration>
+		<inherited>true</inherited>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-compiler-plugin</artifactId>
+		<version>2.5.1</version>
+		<configuration>
+		    <source>1.6</source>
+		    <target>1.6</target>
+		    <encoding>UTF-8</encoding>
+		    <showWarnings>true</showWarnings>
+		    <showDeprecation>true</showDeprecation>
+		</configuration>
+	    </plugin>
+	    <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-release-plugin</artifactId>
+		<version>2.5</version>
+		<configuration>
+		    <autoVersionSubmodules>true</autoVersionSubmodules>
+		    <useReleaseProfile>false</useReleaseProfile>
+		    <releaseProfiles>release</releaseProfiles>
+		    <goals>deploy</goals>
+		</configuration>
 	    </plugin>
 	    <plugin>
 		    <groupId>org.apache.maven.plugins</groupId>
@@ -108,6 +118,66 @@
 			    <wtpversion>${wtp.version}</wtpversion>
 		    </configuration>
 	    </plugin>
-    </plugins>
-</build>
+	</plugins>
+    </build>
+	<profiles>
+	  <profile> 
+	    <id>release</id>
+	    <build>
+		<plugins>
+		    <plugin>
+		      <groupId>org.sonatype.plugins</groupId>
+		      <artifactId>nexus-staging-maven-plugin</artifactId>
+		      <version>1.6.2</version>
+		      <extensions>true</extensions>
+		      <configuration>
+		        <serverId>ossrh</serverId>
+		        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+		        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+		      </configuration>
+		    </plugin>
+		    <plugin>
+		      <groupId>org.apache.maven.plugins</groupId>
+		      <artifactId>maven-source-plugin</artifactId>
+		      <version>2.2.1</version>
+		      <executions>
+		        <execution>
+		          <id>attach-sources</id>
+		          <goals>
+		            <goal>jar-no-fork</goal>
+		          </goals>
+		        </execution>
+		      </executions>
+		    </plugin>
+		    <plugin>
+		      <groupId>org.apache.maven.plugins</groupId>
+		      <artifactId>maven-javadoc-plugin</artifactId>
+		      <version>2.9.1</version>
+		      <executions>
+		        <execution>
+		          <id>attach-javadocs</id>
+		          <goals>
+		            <goal>jar</goal>
+		          </goals>
+		        </execution>
+		      </executions>
+		    </plugin>
+		    <plugin>
+		      <groupId>org.apache.maven.plugins</groupId>
+		      <artifactId>maven-gpg-plugin</artifactId>
+		      <version>1.5</version>
+		      <executions>
+		        <execution>
+		          <id>sign-artifacts</id>
+		          <phase>verify</phase>
+		          <goals>
+		            <goal>sign</goal>
+		          </goals>
+		        </execution>
+		      </executions>
+	      </plugin>
+	  </plugins>
+	    </build>
+	  </profile>
+	</profiles>
 </project>
