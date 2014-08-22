@@ -13,6 +13,46 @@ Key features:
 5. Available throught Wicket DebugBar panel
   * Dependency to wicket-devutils is optional
 
+Installation
+------------
+To use wicket console library in your code add following into your pom.xml
+```xml
+		<dependency>
+		      <groupId>ru.ydn.wicket.wicket-console</groupId>
+		      <artifactId>wicket-console</artifactId>
+		      <version>1.0</version>
+		</dependency>
+```
+
+Then you should either enable Wicket DebugBar in your code. 
+```java
+public class MyPage extends WebPage {
+
+	public MyPage(final PageParameters parameters) {
+		super(parameters);
+...
+		add(new DebugBar("debugBar"));
+    }
+}
+
+```
+
+or you can add WicketConsolePanel on a required page
+```java
+public class MyPage extends WebPage {
+
+	public MyPage(final PageParameters parameters) {
+		super(parameters);
+...
+    add(new WicketConsolePanel("console"));
+    }
+}
+
+```
+
+Demo
+----
+
 Build project:
 ```bash
 cd wicket-console
