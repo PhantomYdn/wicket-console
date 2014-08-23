@@ -30,6 +30,13 @@
 	<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
       </repository>
     </distributionManagement>
+    <developers>
+	<developer>
+	    <id>owner</id>
+	    <name>Ilia Naryzhny</name>
+	    <email>phantom@ydn.ru</email>
+	</developer>
+    </developers>
     <licenses>
 	    <license>
 		    <name>The Apache Software License, Version 2.0</name>
