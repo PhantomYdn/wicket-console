@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/PhantomYdn/wicket-console.svg?branch=master)](https://travis-ci.org/PhantomYdn/wicket-console)
+[![Build Status](https://travis-ci.org/PhantomYdn/wicket-console.svg?branch=master)](https://travis-ci.org/PhantomYdn/wicket-console) [![Coverage Status](https://img.shields.io/coveralls/PhantomYdn/wicket-console.svg)](https://coveralls.io/r/PhantomYdn/wicket-console)
 
 wicket-console
 ==============
