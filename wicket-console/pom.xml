@@ -26,6 +26,11 @@
 	    <version>${wicket.version}</version>
     </dependency>
     <dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>javax.servlet-api</artifactId>
+		<scope>provided</scope>
+	</dependency>
+    <dependency>
 	    <groupId>org.apache.wicket</groupId>
 	    <artifactId>wicket-devutils</artifactId>
 	    <scope>provided</scope>
