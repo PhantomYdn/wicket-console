@@ -24,7 +24,7 @@ public class Initializer implements IInitializer
 
 	@Override
 	public void destroy(Application application) {
-		ScriptExecutorHolder.get().destroy(application);
+		ScriptExecutorHolder.get(application).destroy(application);
 	}
 
 }

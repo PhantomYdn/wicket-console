@@ -37,9 +37,13 @@ public class ScriptExecutorHolder implements ISessionStore.BindListener, ISessio
 		
 	}
 	
-	public static ScriptExecutorHolder get()
+	public static ScriptExecutorHolder get() {
+		return get(Application.get());
+	}
+	
+	public static ScriptExecutorHolder get(Application application)
 	{
-		return Application.get().getMetaData(SCRIPT_EXECUTOR_HOLDER);
+		return application.getMetaData(SCRIPT_EXECUTOR_HOLDER);
 	}
 	
 	public ScriptExecutor getScriptExecutor()
