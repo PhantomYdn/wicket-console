@@ -37,24 +37,6 @@ public class WicketConsolePanel extends Panel
 		super(id);
 		setOutputMarkupId(true);
 		Form<String> form =new Form<String>("form");		
-		IModel<List<ScriptHistoryItem>> historyModel = new LoadableDetachableModel<List<ScriptHistoryItem>>() {
-
-			@Override
-			protected List<ScriptHistoryItem> load() {
-				return ScriptExecutorHolder.get().getScriptExecutor().getHistory();
-			}
-		};
-		historyContainer = new WebMarkupContainer("historyContainer");
-		historyContainer.add(ScrollToBottomBehavior.INSTANCE).setOutputMarkupId(true);
-		form.add(historyContainer);
-		ListView<ScriptHistoryItem> history = new ListView<ScriptHistoryItem>("history", historyModel) {
-			
-			@Override
-			protected void populateItem(ListItem<ScriptHistoryItem> item) {
-				item.add(new HistoryItemPanel("item", item.getModel()));
-			}
-		};
-		historyContainer.add(history);
 		scriptTextArea = new TextArea<String>("script", scriptModel);
 		scriptTextArea.add(new CtrlEnterSubmitBehavior()
 		{
@@ -91,6 +73,25 @@ public class WicketConsolePanel extends Panel
 			}
 			
 		}.setDefaultFormProcessing(false));
+		IModel<List<ScriptHistoryItem>> historyModel = new LoadableDetachableModel<List<ScriptHistoryItem>>() {
+
+			@Override
+			protected List<ScriptHistoryItem> load() {
+				return ScriptExecutorHolder.get().getScriptExecutor().getHistory();
+			}
+		};
+		historyContainer = new WebMarkupContainer("historyContainer");
+		historyContainer.add(ScrollToBottomBehavior.INSTANCE).setOutputMarkupId(true);
+		form.add(historyContainer);
+		ListView<ScriptHistoryItem> history = new ListView<ScriptHistoryItem>("history", historyModel) {
+			
+			@Override
+			protected void populateItem(ListItem<ScriptHistoryItem> item) {
+				item.add(new HistoryItemPanel("item", item.getModel(),scriptTextArea));
+			}
+		};
+		historyContainer.add(history);
+
 		add(form);
 	}
 
