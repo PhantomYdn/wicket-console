@@ -19,6 +19,15 @@
 	display: inline;
 }
 
+div.wc-item-content
+{
+	float:left;
+}
+div.wc-item-functions
+{
+	align:right;
+}
+
 div.wc-item-script
 {
 	font-weight: bold;
@@ -63,6 +72,13 @@ div.wc-item-return:BEFORE
 div.wc-item-exception
 {
 	color: red;
+}
+
+div.wc-item-clone
+{
+	cursor:pointer;
+	text-decoration: underline;
+	text-align:right;
 }
 
 textarea.wc-script

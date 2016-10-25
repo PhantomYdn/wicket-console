@@ -2,6 +2,9 @@ package ru.ydn.wicket.wicketconsole;
 
 import java.io.Serializable;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxEventBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
@@ -39,7 +42,7 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 		
 	}
 
-	public HistoryItemPanel(String id, IModel<ScriptHistoryItem> model)
+	public HistoryItemPanel(String id, IModel<ScriptHistoryItem> model,final Component inpitField)
 	{
 		super(id, model instanceof CompoundPropertyModel?model:new CompoundPropertyModel<ScriptHistoryItem>(model));
 		add(new HideableLabel("script"));
@@ -47,6 +50,14 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 		add(new HideableLabel("err"));
 		add(new HideableLabel("returnObject"));
 		add(new HideableLabel("exception"));
+		add(new Label("clone","[clone]").add(new AjaxEventBehavior("click"){
+
+			@Override
+			protected void onEvent(AjaxRequestTarget target) {
+				inpitField.setDefaultModelObject(get("script").getDefaultModelObject());
+				target.add(inpitField);
+			}
+		}));
 	}
 
 	@Override
