@@ -1,16 +1,24 @@
 package ru.ydn.wicket.wicketconsole;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
+import org.apache.wicket.extensions.markup.html.form.select.Select;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -20,6 +28,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.Strings;
 
@@ -28,9 +37,11 @@ public class WicketConsolePanel extends Panel
 {
 	private IModel<String> scriptModel = Model.of("");
 	private IModel<Boolean> keepScriptModel = Model.of(false);
+	private IModel<String> scriptEngine = Model.of("");
 	
 	private WebMarkupContainer historyContainer;
 	private TextArea<String> scriptTextArea;
+	private DropDownChoice<String> engineSelector;
 	
 	public WicketConsolePanel(String id)
 	{
@@ -48,6 +59,22 @@ public class WicketConsolePanel extends Panel
 			
 		}).setOutputMarkupId(true);
 		form.add(scriptTextArea);
+
+		List<ScriptEngineFactory> factories = new ScriptEngineManager().getEngineFactories();
+		List<String> fList = new ArrayList<String>();
+		for (ScriptEngineFactory factory : factories) {
+			String engineName;
+			if (factory.getNames().size()>0){
+				engineName = factory.getNames().get(0);
+			}else{
+				engineName = factory.getEngineName();
+			}
+			fList.add(engineName);
+		}		
+		engineSelector = new DropDownChoice<String>("scriptEngine",scriptEngine,fList);
+		engineSelector.setOutputMarkupId(true);
+		form.add(engineSelector);
+		
 		form.add(new AjaxCheckBox("keepScript", keepScriptModel) {
 			
 			@Override
@@ -87,7 +114,7 @@ public class WicketConsolePanel extends Panel
 			
 			@Override
 			protected void populateItem(ListItem<ScriptHistoryItem> item) {
-				item.add(new HistoryItemPanel("item", item.getModel(),scriptTextArea));
+				item.add(new HistoryItemPanel("item", item.getModel(),scriptTextArea,engineSelector));
 			}
 		};
 		historyContainer.add(history);
@@ -107,7 +134,13 @@ public class WicketConsolePanel extends Panel
 		String commandScript = scriptModel.getObject();
 		if(!Strings.isEmpty(commandScript))
 		{
-			ScriptExecutorHolder.get().getScriptExecutor().execute(commandScript);
+			String scriptEngineName = scriptEngine.getObject();
+			if (!Strings.isEmpty(scriptEngineName)){
+				ScriptExecutorHolder.get().getScriptExecutor().execute(commandScript,scriptEngineName);
+			}else{
+				ScriptExecutorHolder.get().getScriptExecutor().execute(commandScript);
+			}
+			
 			if(!keepScriptModel.getObject())
 			{
 				scriptModel.setObject("");

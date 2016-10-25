@@ -12,6 +12,7 @@ import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.string.Strings;
 
 public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
@@ -42,19 +43,22 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 		
 	}
 
-	public HistoryItemPanel(String id, IModel<ScriptHistoryItem> model,final Component inpitField)
+	public HistoryItemPanel(String id, IModel<ScriptHistoryItem> model,final Component inpitField,final Component engineSelect)
 	{
 		super(id, model instanceof CompoundPropertyModel?model:new CompoundPropertyModel<ScriptHistoryItem>(model));
+		add(new HideableLabel("engine"));
 		add(new HideableLabel("script"));
 		add(new HideableLabel("out"));
 		add(new HideableLabel("err"));
 		add(new HideableLabel("returnObject"));
 		add(new HideableLabel("exception"));
-		add(new Label("clone","[clone]").add(new AjaxEventBehavior("click"){
+		add(new Label("clone",new ResourceModel("wc.cloneScript")).add(new AjaxEventBehavior("click"){
 
 			@Override
 			protected void onEvent(AjaxRequestTarget target) {
 				inpitField.setDefaultModelObject(get("script").getDefaultModelObject());
+				engineSelect.setDefaultModelObject(get("engine").getDefaultModelObject());
+				target.add(engineSelect);
 				target.add(inpitField);
 			}
 		}));

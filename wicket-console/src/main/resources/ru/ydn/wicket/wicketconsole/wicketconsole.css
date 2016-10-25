@@ -19,9 +19,13 @@
 	display: inline;
 }
 
+.wc-item-engine
+{
+	float:left
+}
+
 div.wc-item-content
 {
-	float:left;
 }
 div.wc-item-functions
 {
@@ -35,7 +39,7 @@ div.wc-item-script
 
 div.wc-item-script:BEFORE
 {
-	content: "<<: ";
+	content: ": ";
 }
 
 div.wc-item-out

@@ -37,6 +37,14 @@ public class ScriptExecutor
 		this.ctx = ctx;
 	}
 	
+	public ScriptHistoryItem execute(String command,String scriptEngineName)
+	{
+		engine = manager.getEngineByName(scriptEngineName);
+		ScriptHistoryItem newItem = execute(command);
+		newItem.setEngine(scriptEngineName);
+		return newItem;
+	}
+	
 	public ScriptHistoryItem execute(String command)
 	{
 		ScriptHistoryItem historyItem = executeWithoutHistory(command);
