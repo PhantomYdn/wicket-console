@@ -9,6 +9,7 @@ public class ScriptHistoryItem implements Serializable
 	private Exception exception;
 	private String out;
 	private String err;
+	private String engine;
 	
 	public ScriptHistoryItem(String script)
 	{
@@ -45,6 +46,12 @@ public class ScriptHistoryItem implements Serializable
 	public void setErr(String err) {
 		this.err = err;
 	}
+	public String getEngine() {
+		return engine;
+	}
+	public void setEngine(String engine) {
+		this.engine = engine;
+	}
 	
 	public String getContent()
 	{
@@ -52,7 +59,7 @@ public class ScriptHistoryItem implements Serializable
 	}
 	@Override
 	public String toString() {
-		return "ScriptHistoryItem [script=" + script + ", returnObject="
+		return "ScriptHistoryItem [engine="+engine+", script=" + script + ", returnObject="
 				+ returnObject + ", exception=" + exception + ", out=" + out
 				+ ", err=" + err + "]";
 	}
