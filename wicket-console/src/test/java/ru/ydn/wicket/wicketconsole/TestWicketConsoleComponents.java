@@ -62,7 +62,7 @@ public class TestWicketConsoleComponents
 		assertTrue(history.size()==1);
 		ScriptHistoryItem item = history.get(0);
 		assertEquals("2+2", item.getScript());
-		assertEquals(4.0, item.getReturnObject());
+		assertEquals(4, item.getReturnObject());
 		assertTrue(Strings.isEmpty(item.getOut()));
 		assertTrue(Strings.isEmpty(item.getErr()));
 		assertNull(item.getException());
