@@ -78,11 +78,15 @@ div.wc-item-exception
 	color: red;
 }
 
-div.wc-item-clone
+.wc-item-reuse
 {
-	cursor:pointer;
-	text-decoration: underline;
-	text-align:right;
+	font-family: FontAwesome,inherit;
+	content: "\f01e";
+	display:block;
+	background-color: #e6e6e6;
+	width: 15px;
+	height: 15px;
+	text-align: right;
 }
 
 textarea.wc-script
@@ -90,3 +94,8 @@ textarea.wc-script
 	width: 100%;
 	height: 10em;
 }
+
+
+
+
+

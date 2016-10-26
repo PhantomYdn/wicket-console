@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
@@ -17,6 +18,9 @@ import org.apache.wicket.util.string.Strings;
 
 public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 {
+	Component script;
+	Component engine;
+	
 	private static class HideableLabel extends MultiLineLabel
 	{
 
@@ -46,22 +50,21 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 	public HistoryItemPanel(String id, IModel<ScriptHistoryItem> model,final Component inpitField,final Component engineSelect)
 	{
 		super(id, model instanceof CompoundPropertyModel?model:new CompoundPropertyModel<ScriptHistoryItem>(model));
-		add(new HideableLabel("engine"));
-		add(new HideableLabel("script"));
+		add(engine = new HideableLabel("engine"));
+		add(script = new HideableLabel("script"));
 		add(new HideableLabel("out"));
 		add(new HideableLabel("err"));
 		add(new HideableLabel("returnObject"));
 		add(new HideableLabel("exception"));
-		add(new Label("clone",new ResourceModel("wc.cloneScript")).add(new AjaxEventBehavior("click"){
-
+		add(new AjaxLink("reuse"){
 			@Override
-			protected void onEvent(AjaxRequestTarget target) {
-				inpitField.setDefaultModelObject(get("script").getDefaultModelObject());
-				engineSelect.setDefaultModelObject(get("engine").getDefaultModelObject());
+			public void onClick(AjaxRequestTarget target) {
+				inpitField.setDefaultModelObject(script.getDefaultModelObject());
+				engineSelect.setDefaultModelObject(engine.getDefaultModelObject());
 				target.add(engineSelect);
 				target.add(inpitField);
 			}
-		}));
+		});
 	}
 
 	@Override
