@@ -8,14 +8,21 @@ import javax.script.SimpleScriptContext;
 
 public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlayerResult{
 
+	private static final long serialVersionUID = 1L;
+	
 	private ScriptContext ctx;
 	private transient Object result;
+	
+	private String out;
+	private String error;
+	private IScriptEngineInterlayerResultRenderer renderer;
 
 	public JavaxScriptEngineInterlayerResult() {
 		this.ctx = new SimpleScriptContext();
 		ctx.setWriter(new StringWriter());
 		ctx.setErrorWriter(new StringWriter());
 		ctx.setReader(new StringReader(""));
+		renderer = new JavaxResultSimpleRenderer(this);
 	}
 	
 	protected ScriptContext getScriptContext(){
@@ -24,19 +31,19 @@ public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlaye
 
 	@Override
 	public String getOut() {
-		return getContent((StringWriter)ctx.getWriter());
+		return out;
 	}
 
 	@Override
 	public String getError() {
-		return getContent((StringWriter)ctx.getErrorWriter());
+		return error;
 	}
 	
-	private static String getContent(StringWriter writer)
+	private static String getContentAndClear(StringWriter writer)
 	{
 		StringBuffer buf = writer.getBuffer();
 		String ret = buf.toString();
-		//buf.setLength(0);
+		buf.setLength(0);
 		return ret;
 	}
 
@@ -46,7 +53,20 @@ public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlaye
 	}
 
 	protected void setResult(Object result) {
+		out = getContentAndClear((StringWriter)ctx.getWriter());
+		error = getContentAndClear((StringWriter)ctx.getErrorWriter()); 
 		this.result = result;
 	}
+
+	public IScriptEngineInterlayerResultRenderer getRenderer() {
+		return renderer;
+	}
+
+	public void setRenderer(IScriptEngineInterlayerResultRenderer renderer) {
+		this.renderer = renderer;
+	}
+	
+	
+	
 
 }

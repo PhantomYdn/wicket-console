@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ScriptHistoryItem implements Serializable
 {
 	private String script;
-	private transient Object returnObject;
+	private IScriptEngineInterlayerResult returnObject;
 	private Exception exception;
 	private String out;
 	private String err;
@@ -22,10 +22,10 @@ public class ScriptHistoryItem implements Serializable
 	public void setScript(String script) {
 		this.script = script;
 	}
-	public Object getReturnObject() {
+	public IScriptEngineInterlayerResult getReturnObject() {
 		return returnObject;
 	}
-	public void setReturnObject(Object returnObject) {
+	public void setReturnObject(IScriptEngineInterlayerResult returnObject) {
 		this.returnObject = returnObject;
 	}
 	public Exception getException() {

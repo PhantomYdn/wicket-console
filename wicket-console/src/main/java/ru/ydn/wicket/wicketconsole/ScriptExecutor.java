@@ -46,7 +46,7 @@ public class ScriptExecutor
 		try
 		{
 			IScriptEngineInterlayerResult result = getScriptEngine().eval(command);
-			historyItem.setReturnObject(result.getResult());
+			historyItem.setReturnObject(result);
 			historyItem.setOut(result.getOut());
 			historyItem.setErr(result.getError());
 		} catch (Exception e)
