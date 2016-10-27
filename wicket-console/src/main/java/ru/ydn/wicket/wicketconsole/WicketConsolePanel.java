@@ -48,7 +48,7 @@ public class WicketConsolePanel extends Panel
 {
 	public static final CssResourceReference BOOTSTRAP_CSS = new WebjarsCssResourceReference("bootstrap/current/css/bootstrap.min.css");
 	public static final CssResourceReference FONT_AWESOME_CSS = new WebjarsCssResourceReference("font-awesome/current/css/font-awesome.min.css");
-
+	
 	private IModel<String> scriptModel = Model.of("");
 	private IModel<Boolean> keepScriptModel = Model.of(false);
 	private IModel<String> scriptEngine = Model.of("");
@@ -74,19 +74,8 @@ public class WicketConsolePanel extends Panel
 			
 		}).setOutputMarkupId(true);
 		form.add(scriptTextArea);
-
-		List<ScriptEngineFactory> factories = new ScriptEngineManager().getEngineFactories();
-		List<String> fList = new ArrayList<String>();
-		for (ScriptEngineFactory factory : factories) {
-			String engineName;
-			if (factory.getNames().size()>0){
-				engineName = factory.getNames().get(0);
-			}else{
-				engineName = factory.getEngineName();
-			}
-			fList.add(engineName);
-		}		
-		engineSelector = new DropDownChoice<String>("scriptEngine",scriptEngine,fList);
+		
+		engineSelector = new DropDownChoice<String>("scriptEngine",scriptEngine,ScriptEngineInterlayerManager.INSTANCE.getNames());
 		engineSelector.setOutputMarkupId(true);
 		form.add(engineSelector);
 		
