@@ -80,13 +80,14 @@ div.wc-item-exception
 
 .wc-item-reuse
 {
-	font-family: FontAwesome,inherit;
-	content: "\f01e";
+	padding-left: 2px; 
+	padding-top: 0px; 
+	border-top-width: 0px;
 	display:block;
 	background-color: #e6e6e6;
-	width: 15px;
-	height: 15px;
-	text-align: right;
+	width: 16px;
+	height: 16px;
+	
 }
 
 textarea.wc-script

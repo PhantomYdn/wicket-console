@@ -35,6 +35,47 @@
 	    <artifactId>wicket-devutils</artifactId>
 	    <scope>provided</scope>
     </dependency>
+    		<dependency>
+			    <groupId>com.google.inject</groupId>
+			    <artifactId>guice</artifactId>
+			    <version>4.0</version>
+		    </dependency>
+		    <dependency>
+			    <groupId>com.google.inject.extensions</groupId>
+			    <artifactId>guice-servlet</artifactId>
+			    <version>4.0</version>
+		    </dependency>
+		<!-- WEB JARS -->
+		    <dependency>
+			    <groupId>de.agilecoders.wicket.webjars</groupId>
+			    <artifactId>wicket-webjars</artifactId>
+			    <version>0.5.4</version>
+		    </dependency>
+		    <dependency>
+				<groupId>org.webjars</groupId>
+				<artifactId>font-awesome</artifactId>
+				<version>4.6.3</version>
+		    </dependency>
+		    <dependency>
+				<groupId>org.webjars</groupId>
+				<artifactId>bootstrap</artifactId>
+				<version>3.3.6</version>
+		    </dependency>
+		    <dependency>
+			    <groupId>org.webjars</groupId>
+			    <artifactId>gridster.js</artifactId>
+			    <version>0.5.6</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.webjars</groupId>
+			    <artifactId>jquery-ui</artifactId>
+			    <version>1.11.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.webjars</groupId>
+				<artifactId>metisMenu</artifactId>
+				<version>1.1.3-1</version>
+			</dependency>   
   </dependencies>
   <build>
   	<resources>
