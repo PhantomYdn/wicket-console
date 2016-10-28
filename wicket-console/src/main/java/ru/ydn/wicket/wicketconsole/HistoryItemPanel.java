@@ -50,17 +50,8 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 	public HistoryItemPanel(String id, IModel<ScriptHistoryItem> model,final Component inpitField,final Component engineSelect)
 	{
 		super(id, model instanceof CompoundPropertyModel?model:new CompoundPropertyModel<ScriptHistoryItem>(model));
-		//IScriptEngineInterlayerResultRenderer renderer = model.getObject().getReturnObject().getRenderer();
-		//add(renderer.getOutView("out"));
-		//add(renderer.getOutView("err"));
-		
 		add(engine = new HideableLabel("engine"));
 		add(script = new HideableLabel("script"));
-		add(new HideableLabel("out"));
-		add(new HideableLabel("err"));
-		
-		add(new HideableLabel("returnObject"));
-		add(new HideableLabel("exception"));
 		add(new AjaxLink("reuse"){
 			@Override
 			public void onClick(AjaxRequestTarget target) {
@@ -70,6 +61,23 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 				target.add(inpitField);
 			}
 		});
+	}
+	
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+		
+		ScriptHistoryItem obj =  getModelObject();
+		IScriptEngineInterlayerResultRenderer renderer =  getModelObject().getResultObject().getRenderer();
+		add(renderer.getOutView("out"));
+		add(renderer.getErrorView("err"));
+		
+		//add(new HideableLabel("out"));
+		//add(new HideableLabel("err"));
+		
+		add(new HideableLabel("returnObject"));
+		add(new HideableLabel("exception"));
+
 	}
 
 	@Override

@@ -7,15 +7,14 @@ import javax.script.ScriptContext;
 import javax.script.SimpleScriptContext;
 
 public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlayerResult{
-
 	private static final long serialVersionUID = 1L;
 	
-	private ScriptContext ctx;
+	private transient ScriptContext ctx;
 	private transient Object result;
 	
 	private String out;
 	private String error;
-	private IScriptEngineInterlayerResultRenderer renderer;
+	private transient IScriptEngineInterlayerResultRenderer renderer;
 
 	public JavaxScriptEngineInterlayerResult() {
 		this.ctx = new SimpleScriptContext();
@@ -34,9 +33,22 @@ public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlaye
 		return out;
 	}
 
+	protected void setOut(String out) {
+		this.out = out;
+	}
+
 	@Override
 	public String getError() {
 		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
+	
+	public void onUpdate(){
+		out = getContentAndClear((StringWriter)ctx.getWriter());
+		error = getContentAndClear((StringWriter)ctx.getErrorWriter()); 
 	}
 	
 	private static String getContentAndClear(StringWriter writer)
@@ -48,16 +60,14 @@ public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlaye
 	}
 
 	@Override
-	public Object getResult() {
+	public Object getReturnedObject() {
 		return result;
 	}
 
-	protected void setResult(Object result) {
-		out = getContentAndClear((StringWriter)ctx.getWriter());
-		error = getContentAndClear((StringWriter)ctx.getErrorWriter()); 
+	protected void setReturnedObject(Object result) {
 		this.result = result;
 	}
-
+	
 	public IScriptEngineInterlayerResultRenderer getRenderer() {
 		return renderer;
 	}

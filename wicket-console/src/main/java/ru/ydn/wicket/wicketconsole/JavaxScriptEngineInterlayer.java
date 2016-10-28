@@ -25,7 +25,8 @@ public class JavaxScriptEngineInterlayer implements IScriptEngineInterlayer{
 	@Override
 	public IScriptEngineInterlayerResult eval(String command) throws ScriptException {
 		JavaxScriptEngineInterlayerResult result = new JavaxScriptEngineInterlayerResult();
-		result.setResult(engine.eval(command, result.getScriptContext()));
+		result.setReturnedObject(engine.eval(command, result.getScriptContext()));
+		result.onUpdate();
 		return result;
 	}
 

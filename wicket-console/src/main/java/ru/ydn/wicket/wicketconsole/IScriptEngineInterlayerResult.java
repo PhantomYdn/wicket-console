@@ -8,7 +8,9 @@ public interface IScriptEngineInterlayerResult extends Serializable{
 	
 	String getError();
 	
-	Object getResult();
+	Object getReturnedObject();
+	
+	void onUpdate();
 	
 	public IScriptEngineInterlayerResultRenderer getRenderer();
 
