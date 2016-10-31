@@ -1,25 +1,19 @@
 package ru.ydn.wicket.wicketconsole;
 
-import java.io.Serializable;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.string.Strings;
 
 public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 {
-	Component script;
-	Component engine;
+	private Component script;
+	private Component engine;
 	
 	private static class HideableLabel extends MultiLineLabel
 	{

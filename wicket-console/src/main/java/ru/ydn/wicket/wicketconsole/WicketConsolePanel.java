@@ -1,7 +1,6 @@
 package ru.ydn.wicket.wicketconsole;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.script.ScriptEngineFactory;
@@ -10,15 +9,10 @@ import javax.script.ScriptEngineManager;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.extensions.markup.html.form.select.Select;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.PriorityHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -28,27 +22,12 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.util.ListModel;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.Strings;
-
-import com.google.inject.Inject;
-
-import de.agilecoders.wicket.webjars.WicketWebjars;
-import de.agilecoders.wicket.webjars.request.resource.WebjarsCssResourceReference;
-import de.agilecoders.wicket.webjars.request.resource.WebjarsJavaScriptResourceReference;
-import de.agilecoders.wicket.webjars.settings.IWebjarsSettings;
-
 
 
 public class WicketConsolePanel extends Panel
 {
-	public static final CssResourceReference BOOTSTRAP_CSS = new WebjarsCssResourceReference("bootstrap/current/css/bootstrap.min.css");
-	public static final CssResourceReference FONT_AWESOME_CSS = new WebjarsCssResourceReference("font-awesome/current/css/font-awesome.min.css");
-	
 	private IModel<String> scriptModel = Model.of("");
 	private IModel<Boolean> keepScriptModel = Model.of(false);
 	private IModel<String> scriptEngine = Model.of("");
@@ -74,7 +53,7 @@ public class WicketConsolePanel extends Panel
 			
 		}).setOutputMarkupId(true);
 		form.add(scriptTextArea);
-		
+
 		engineSelector = new DropDownChoice<String>("scriptEngine",scriptEngine,ScriptEngineInterlayerManager.INSTANCE.getNames());
 		engineSelector.setOutputMarkupId(true);
 		form.add(engineSelector);
@@ -128,8 +107,6 @@ public class WicketConsolePanel extends Panel
 
 	@Override
 	public void renderHead(IHeaderResponse response) {
-		response.render(new PriorityHeaderItem(CssHeaderItem.forReference(BOOTSTRAP_CSS)));
-		response.render(CssHeaderItem.forReference(FONT_AWESOME_CSS));
 		super.renderHead(response);
 		HeaderItem cssResource = getCSSResource();
 		if(cssResource!=null) response.render(cssResource);
