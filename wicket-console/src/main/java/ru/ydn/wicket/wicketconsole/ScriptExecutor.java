@@ -15,8 +15,6 @@ import javax.script.SimpleScriptContext;
 
 public class ScriptExecutor
 {
-	private static final ScriptEngineManager manager = new ScriptEngineManager();
-	
 	private LinkedList<ScriptHistoryItem> history = new LinkedList<ScriptHistoryItem>();
 	
 	private IScriptEngineInterlayer engine;
@@ -43,17 +41,12 @@ public class ScriptExecutor
 	public ScriptHistoryItem executeWithoutHistory(String command)
 	{
 		ScriptHistoryItem historyItem = new ScriptHistoryItem(command);
-		try
-		{
 			IScriptEngineInterlayerResult result = getScriptEngine().eval(command);
 			historyItem.setResultObject(result);
 			historyItem.setReturnObject(result.getReturnedObject());
 			historyItem.setOut(result.getOut());
 			historyItem.setErr(result.getError());
-		} catch (Exception e)
-		{
-			historyItem.setException(e);
-		}
+
 		return historyItem;
 	}
 	

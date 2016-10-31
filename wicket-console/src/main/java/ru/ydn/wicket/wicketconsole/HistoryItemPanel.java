@@ -72,13 +72,11 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 		add(renderer.getOutView("out"));
 		add(renderer.getErrorView("err"));
 		
-		//add(new HideableLabel("out"));
-		//add(new HideableLabel("err"));
-		
 		add(new HideableLabel("returnObject"));
 		add(new HideableLabel("exception"));
 
 	}
+	
 
 	@Override
 	protected void onComponentTag(ComponentTag tag) {

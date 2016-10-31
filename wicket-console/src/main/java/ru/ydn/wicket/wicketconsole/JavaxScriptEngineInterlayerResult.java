@@ -42,7 +42,7 @@ public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlaye
 		return error;
 	}
 
-	public void setError(String error) {
+	protected void setError(String error) {
 		this.error = error;
 	}
 	
@@ -75,8 +75,5 @@ public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlaye
 	public void setRenderer(IScriptEngineInterlayerResultRenderer renderer) {
 		this.renderer = renderer;
 	}
-	
-	
-	
 
 }

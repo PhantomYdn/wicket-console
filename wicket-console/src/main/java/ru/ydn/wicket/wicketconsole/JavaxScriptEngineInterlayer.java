@@ -12,9 +12,12 @@ public class JavaxScriptEngineInterlayer implements IScriptEngineInterlayer{
 	ScriptEngine engine;
 
 	
-	public JavaxScriptEngineInterlayer(String name, String javaxName) {
+	public JavaxScriptEngineInterlayer() {
+	}
+
+	@Override
+	public void setName(String name) {
 		this.name = name;
-		engine = manager.getEngineByName(javaxName);
 	}
 
 	@Override
@@ -23,11 +26,22 @@ public class JavaxScriptEngineInterlayer implements IScriptEngineInterlayer{
 	}
 
 	@Override
-	public IScriptEngineInterlayerResult eval(String command) throws ScriptException {
+	public IScriptEngineInterlayerResult eval(String command) {
+		if (engine == null){
+			engine = manager.getEngineByName(name);
+		}
+
 		JavaxScriptEngineInterlayerResult result = new JavaxScriptEngineInterlayerResult();
-		result.setReturnedObject(engine.eval(command, result.getScriptContext()));
-		result.onUpdate();
+		
+		try {
+			result.setReturnedObject(engine.eval(command, result.getScriptContext()));
+			result.onUpdate();
+		} catch (ScriptException e) {
+			result.setError(e.getMessage());
+		}
+		
 		return result;
 	}
+
 
 }
