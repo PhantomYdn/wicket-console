@@ -3,6 +3,7 @@ package ru.ydn.wicket.wicketconsole;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.string.Strings;
 
 public class JavaxResultSimpleRenderer implements IScriptEngineInterlayerResultRenderer {
@@ -39,12 +40,12 @@ public class JavaxResultSimpleRenderer implements IScriptEngineInterlayerResultR
 	}
 
 	public Component getErrorView(String name) {
-		return new HideableLabel(name, data.getError());
+		return new HideableLabel(name, new PropertyModel<String>(data, "error"));
 	}
 
 	@Override
 	public Component getOutView(String name) {
-		return new HideableLabel(name, data.getOut());
+		return new HideableLabel(name, new PropertyModel<String>(data, "out"));
 	}
 
 }
