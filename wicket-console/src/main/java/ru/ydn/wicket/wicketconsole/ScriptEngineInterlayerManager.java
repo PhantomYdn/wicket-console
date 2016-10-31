@@ -8,20 +8,29 @@ import java.util.Map;
 public class ScriptEngineInterlayerManager {
 
 	public static final ScriptEngineInterlayerManager INSTANCE = new ScriptEngineInterlayerManager();
-
-	Map<String,IScriptEngineInterlayer> interlayers;
+	
+	Map<String,Class<? extends IScriptEngineInterlayer>> interlayers;
 	
 	private ScriptEngineInterlayerManager() {
-		interlayers = new HashMap<String,IScriptEngineInterlayer>();
-		addInterlayer(new JavaxScriptEngineInterlayer("JavaScript","JavaScript"));
+		interlayers = new HashMap<String,Class<? extends IScriptEngineInterlayer>>();
+		addInterlayer("JavaScript",JavaxScriptEngineInterlayer.class);
 	}
 	
-	void addInterlayer(IScriptEngineInterlayer interlayer){
-		interlayers.put(interlayer.getName(), interlayer);
+	void addInterlayer(String name,Class<? extends IScriptEngineInterlayer> class1){
+		interlayers.put(name, class1);
 	}
-	
+
 	public IScriptEngineInterlayer getByName(String name){
-		return interlayers.get(name);
+		try {
+			IScriptEngineInterlayer newInterlayer = interlayers.get(name).newInstance();
+			newInterlayer.setName(name);
+			return newInterlayer;
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public List<String> getNames(){
