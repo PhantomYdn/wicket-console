@@ -2,12 +2,6 @@ package ru.ydn.wicket.wicketconsole;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.IInitializer;
-import org.apache.wicket.protocol.http.WebApplication;
-
-import com.google.inject.Inject;
-
-import de.agilecoders.wicket.webjars.WicketWebjars;
-import de.agilecoders.wicket.webjars.settings.IWebjarsSettings;
 import ru.ydn.wicket.wicketconsole.devutils.WicketConsoleDebugPanel;
 
 public class Initializer implements IInitializer
@@ -15,15 +9,11 @@ public class Initializer implements IInitializer
 	private static final String DEBUG_BAR_CLASS = "org.apache.wicket.devutils.debugbar.DebugBar";
 //	private static final String REGISTER_CONTRIBUTOR_METHOD = "registerContributor";
 
-	@Inject
-	private IWebjarsSettings webjarSettings;
-
 	@Override
 	public void init(Application application) {
 		new ScriptExecutorHolder().init(application);
 		try
 		{
-			WicketWebjars.install((WebApplication) application, webjarSettings);
 			Class.forName(DEBUG_BAR_CLASS);
 			WicketConsoleDebugPanel.initDebugBar(application);
 		} catch (ClassNotFoundException e)
