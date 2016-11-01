@@ -15,31 +15,17 @@ import javax.script.SimpleScriptContext;
 
 public class ScriptExecutor
 {
-	private static final ScriptEngineManager manager = new ScriptEngineManager();
-	
 	private LinkedList<ScriptHistoryItem> history = new LinkedList<ScriptHistoryItem>();
 	
-	private ScriptContext ctx;
-	
-	private ScriptEngine engine;
+	private IScriptEngineInterlayer engine;
 	
 	public ScriptExecutor()
 	{
-		resetContext();
-	}
-	
-	public void resetContext()
-	{
-		ScriptContext ctx = new SimpleScriptContext();
-		ctx.setWriter(new StringWriter());
-		ctx.setErrorWriter(new StringWriter());
-		ctx.setReader(new StringReader(""));
-		this.ctx = ctx;
 	}
 	
 	public ScriptHistoryItem execute(String command,String scriptEngineName)
 	{
-		engine = manager.getEngineByName(scriptEngineName);
+		engine = ScriptEngineInterlayerManager.INSTANCE.getByName(scriptEngineName);
 		ScriptHistoryItem newItem = execute(command);
 		newItem.setEngine(scriptEngineName);
 		return newItem;
@@ -52,35 +38,23 @@ public class ScriptExecutor
 		return historyItem;
 	}
 	
-	private static String getContentAndReset(StringWriter writer)
-	{
-		StringBuffer buf = writer.getBuffer();
-		String ret = buf.toString();
-		buf.setLength(0);
-		//buf.delete(0, buf.length());
-		return ret;
-	}
-	
 	public ScriptHistoryItem executeWithoutHistory(String command)
 	{
 		ScriptHistoryItem historyItem = new ScriptHistoryItem(command);
-		try
-		{
-			historyItem.setReturnObject(getScriptEngine().eval(command, ctx));
-		} catch (ScriptException e)
-		{
-			historyItem.setException(e);
-		}
-		historyItem.setOut(getContentAndReset((StringWriter)ctx.getWriter()));
-		historyItem.setErr(getContentAndReset((StringWriter)ctx.getErrorWriter()));
+			IScriptEngineInterlayerResult result = getScriptEngine().eval(command);
+			historyItem.setResultObject(result);
+			historyItem.setReturnObject(result.getReturnedObject());
+			historyItem.setOut(result.getOut());
+			historyItem.setErr(result.getError());
+
 		return historyItem;
 	}
 	
-	public ScriptEngine getScriptEngine()
+	public IScriptEngineInterlayer getScriptEngine()
 	{
 		if(engine==null)
 		{
-			engine = manager.getEngineByName("JavaScript");
+			engine = ScriptEngineInterlayerManager.INSTANCE.getByName("JavaScript");
 		}
 		return engine;
 	}
