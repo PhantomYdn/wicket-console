@@ -15,37 +15,11 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 	private Component script;
 	private Component engine;
 	
-	private static class HideableLabel extends MultiLineLabel
-	{
-
-		public HideableLabel(String id, IModel<?> model)
-		{
-			super(id, model);
-		}
-
-		public HideableLabel(String id, String label)
-		{
-			super(id, label);
-		}
-
-		public HideableLabel(String id)
-		{
-			super(id);
-		}
-
-		@Override
-		protected void onConfigure() {
-			super.onConfigure();
-			setVisible(!Strings.isEmpty(getDefaultModelObjectAsString()));
-		}
-		
-	}
-
 	public HistoryItemPanel(String id, IModel<ScriptHistoryItem> model,final Component inpitField,final Component engineSelect)
 	{
 		super(id, model instanceof CompoundPropertyModel?model:new CompoundPropertyModel<ScriptHistoryItem>(model));
-		add(engine = new HideableLabel("engine"));
-		add(script = new HideableLabel("script"));
+		add(engine = new MultiLineLabel("engine").add(new HideIfObjectIsEmptyBehavior()));
+		add(script = new MultiLineLabel("script").add(new HideIfObjectIsEmptyBehavior()));
 		add(new AjaxLink("reuse"){
 			@Override
 			public void onClick(AjaxRequestTarget target) {
@@ -63,11 +37,16 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 		
 		ScriptHistoryItem obj =  getModelObject();
 		IScriptEngineInterlayerResultRenderer renderer =  getModelObject().getResultObject().getRenderer();
-		add(renderer.getOutView("out"));
-		add(renderer.getErrorView("err"));
+		if (renderer!=null){
+			add(renderer.getOutView("out"));
+			add(renderer.getErrorView("err"));
+		}else{
+			add(new MultiLineLabel("out").add(new HideIfObjectIsEmptyBehavior()));
+			add(new MultiLineLabel("err").add(new HideIfObjectIsEmptyBehavior()));
+		}
 		
-		add(new HideableLabel("returnObject"));
-		add(new HideableLabel("exception"));
+		add(new MultiLineLabel("returnObject").add(new HideIfObjectIsEmptyBehavior()));
+		add(new MultiLineLabel("exception").add(new HideIfObjectIsEmptyBehavior()));
 
 	}
 	
