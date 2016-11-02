@@ -8,6 +8,8 @@ import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.string.Strings;
 
 public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
@@ -36,17 +38,12 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 		super.onInitialize();
 		
 		ScriptHistoryItem obj =  getModelObject();
-		IScriptEngineInterlayerResultRenderer renderer =  getModelObject().getResultObject().getRenderer();
-		if (renderer!=null){
-			add(renderer.getOutView("out"));
-			add(renderer.getErrorView("err"));
-		}else{
-			add(new MultiLineLabel("out").add(new HideIfObjectIsEmptyBehavior()));
-			add(new MultiLineLabel("err").add(new HideIfObjectIsEmptyBehavior()));
-		}
+		IScriptEngineInterlayerResultRenderer renderer =  obj.getResultObject().getRenderer();
+		add(renderer.getOutView("out"));
+		add(renderer.getErrorView("err"));
 		
-		add(new MultiLineLabel("returnObject").add(new HideIfObjectIsEmptyBehavior()));
-		add(new MultiLineLabel("exception").add(new HideIfObjectIsEmptyBehavior()));
+		add(new MultiLineLabel("returnObject", new PropertyModel<String>(obj, "resultObject.returnedObject")).add(new HideIfObjectIsEmptyBehavior()));
+		//add(new MultiLineLabel("exception").add(new HideIfObjectIsEmptyBehavior()));
 
 	}
 	

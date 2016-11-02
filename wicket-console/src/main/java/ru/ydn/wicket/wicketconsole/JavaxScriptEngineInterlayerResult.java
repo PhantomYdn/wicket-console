@@ -6,6 +6,8 @@ import java.io.StringWriter;
 import javax.script.ScriptContext;
 import javax.script.SimpleScriptContext;
 
+import org.apache.wicket.model.Model;
+
 public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlayerResult{
 	private static final long serialVersionUID = 1L;
 	
@@ -21,7 +23,7 @@ public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlaye
 		ctx.setWriter(new StringWriter());
 		ctx.setErrorWriter(new StringWriter());
 		ctx.setReader(new StringReader(""));
-		renderer = new JavaxResultSimpleRenderer(this);
+		renderer = new JavaxResultSimpleRenderer(Model.of(this));
 	}
 	
 	protected ScriptContext getScriptContext(){

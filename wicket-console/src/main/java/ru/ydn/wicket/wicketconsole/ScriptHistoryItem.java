@@ -5,11 +5,7 @@ import java.io.Serializable;
 public class ScriptHistoryItem implements Serializable
 {
 	private String script;
-	private transient Object returnObject;
 	private IScriptEngineInterlayerResult resultObject;
-	private Exception exception;
-	private String out;
-	private String err;
 	private String engine;
 	
 	public ScriptHistoryItem(String script)
@@ -22,24 +18,6 @@ public class ScriptHistoryItem implements Serializable
 	}
 	public void setScript(String script) {
 		this.script = script;
-	}
-	public Exception getException() {
-		return exception;
-	}
-	public void setException(Exception exception) {
-		this.exception = exception;
-	}
-	public String getOut() {
-		return out;
-	}
-	public void setOut(String out) {
-		this.out = out;
-	}
-	public String getErr() {
-		return err;
-	}
-	public void setErr(String err) {
-		this.err = err;
 	}
 	public String getEngine() {
 		return engine;
@@ -54,12 +32,6 @@ public class ScriptHistoryItem implements Serializable
 	public void setResultObject(IScriptEngineInterlayerResult resultObject) {
 		this.resultObject = resultObject;
 	}
-	public Object getReturnObject() {
-		return returnObject;
-	}
-	public void setReturnObject(Object returnObject) {
-		this.returnObject = returnObject;
-	}
 
 	public String getContent()
 	{
@@ -68,8 +40,8 @@ public class ScriptHistoryItem implements Serializable
 	@Override
 	public String toString() {
 		return "ScriptHistoryItem [engine="+engine+", script=" + script + ", returnObject="
-				+ returnObject + ", exception=" + exception + ", out=" + out
-				+ ", err=" + err + "]";
+				+ resultObject.getReturnedObject() + ", out=" + resultObject.getOut()
+				+ ", err=" + resultObject.getError() + "]";
 	}
 	
 }
