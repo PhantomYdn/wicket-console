@@ -8,31 +8,6 @@ import org.apache.wicket.util.string.Strings;
 
 public class JavaxResultSimpleRenderer implements IScriptEngineInterlayerResultRenderer {
 	
-	private static class HideableLabel extends MultiLineLabel
-	{
-
-		public HideableLabel(String id, IModel<?> model)
-		{
-			super(id, model);
-		}
-
-		public HideableLabel(String id, String label)
-		{
-			super(id, label);
-		}
-
-		public HideableLabel(String id)
-		{
-			super(id);
-		}
-
-		@Override
-		protected void onConfigure() {
-			super.onConfigure();
-			setVisible(!Strings.isEmpty(getDefaultModelObjectAsString()));
-		}
-		
-	}
 	JavaxScriptEngineInterlayerResult data;
 	
 	public JavaxResultSimpleRenderer(JavaxScriptEngineInterlayerResult data){
@@ -40,12 +15,12 @@ public class JavaxResultSimpleRenderer implements IScriptEngineInterlayerResultR
 	}
 
 	public Component getErrorView(String name) {
-		return new HideableLabel(name, new PropertyModel<String>(data, "error"));
+		return new MultiLineLabel(name, new PropertyModel<String>(data, "error")).add(new HideIfObjectIsEmptyBehavior());
 	}
 
 	@Override
 	public Component getOutView(String name) {
-		return new HideableLabel(name, new PropertyModel<String>(data, "out"));
+		return new MultiLineLabel(name, new PropertyModel<String>(data, "out")).add(new HideIfObjectIsEmptyBehavior());
 	}
 
 }

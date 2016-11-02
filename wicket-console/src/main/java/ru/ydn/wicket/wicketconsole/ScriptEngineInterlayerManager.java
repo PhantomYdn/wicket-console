@@ -16,7 +16,7 @@ public class ScriptEngineInterlayerManager {
 		addInterlayer("JavaScript",JavaxScriptEngineInterlayer.class);
 	}
 	
-	void addInterlayer(String name,Class<? extends IScriptEngineInterlayer> class1){
+	public void addInterlayer(String name,Class<? extends IScriptEngineInterlayer> class1){
 		interlayers.put(name, class1);
 	}
 
