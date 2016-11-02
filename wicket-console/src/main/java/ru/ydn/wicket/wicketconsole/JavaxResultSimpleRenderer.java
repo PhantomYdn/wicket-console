@@ -14,13 +14,15 @@ public class JavaxResultSimpleRenderer implements IScriptEngineInterlayerResultR
 		this.data = data;
 	}
 
-	public Component getErrorView(String name) {
-		return new MultiLineLabel(name, new PropertyModel<String>(data, "error")).add(new HideIfObjectIsEmptyBehavior());
+	public Component getErrorView(String id) {
+		return new MultiLineLabel(id, new PropertyModel<String>(data, "error"))
+						.add(HideIfObjectIsEmptyBehavior.INSTANCE);
 	}
 
 	@Override
-	public Component getOutView(String name) {
-		return new MultiLineLabel(name, new PropertyModel<String>(data, "out")).add(new HideIfObjectIsEmptyBehavior());
+	public Component getOutView(String id) {
+		return new MultiLineLabel(id, new PropertyModel<String>(data, "out"))
+						.add(HideIfObjectIsEmptyBehavior.INSTANCE);
 	}
 
 }

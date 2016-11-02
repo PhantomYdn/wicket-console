@@ -20,8 +20,8 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 	public HistoryItemPanel(String id, IModel<ScriptHistoryItem> model,final Component inpitField,final Component engineSelect)
 	{
 		super(id, model instanceof CompoundPropertyModel?model:new CompoundPropertyModel<ScriptHistoryItem>(model));
-		add(engine = new MultiLineLabel("engine").add(new HideIfObjectIsEmptyBehavior()));
-		add(script = new MultiLineLabel("script").add(new HideIfObjectIsEmptyBehavior()));
+		add(engine = new MultiLineLabel("engine").add(HideIfObjectIsEmptyBehavior.INSTANCE));
+		add(script = new MultiLineLabel("script").add(HideIfObjectIsEmptyBehavior.INSTANCE));
 		add(new AjaxLink("reuse"){
 			@Override
 			public void onClick(AjaxRequestTarget target) {
@@ -42,8 +42,7 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 		add(renderer.getOutView("out"));
 		add(renderer.getErrorView("err"));
 		
-		add(new MultiLineLabel("returnObject", new PropertyModel<String>(obj, "resultObject.returnedObject")).add(new HideIfObjectIsEmptyBehavior()));
-		//add(new MultiLineLabel("exception").add(new HideIfObjectIsEmptyBehavior()));
+		add(new MultiLineLabel("returnObject", new PropertyModel<String>(obj, "resultObject.returnedObject")).add(HideIfObjectIsEmptyBehavior.INSTANCE));
 
 	}
 	

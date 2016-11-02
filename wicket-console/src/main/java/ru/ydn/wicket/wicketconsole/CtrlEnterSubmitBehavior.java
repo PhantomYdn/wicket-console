@@ -23,7 +23,7 @@ public class CtrlEnterSubmitBehavior extends AjaxFormSubmitBehavior
 	@Override
 	protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
 		super.updateAjaxAttributes(attributes);
-		attributes.setAllowDefault(true);
+		attributes.setPreventDefault(false);
 		attributes.getAjaxCallListeners().add(new AjaxCallListener().onPrecondition(CHECK_CTRL_ENTER_SCRIPT));
 	}
 

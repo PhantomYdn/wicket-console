@@ -2,7 +2,9 @@ package ru.ydn.wicket.wicketconsole;
 
 import java.io.Serializable;
 
-public interface IScriptEngineInterlayerResult extends Serializable{
+import org.apache.wicket.util.io.IClusterable;
+
+public interface IScriptEngineInterlayerResult extends IClusterable {
 	
 	String getOut();
 	
