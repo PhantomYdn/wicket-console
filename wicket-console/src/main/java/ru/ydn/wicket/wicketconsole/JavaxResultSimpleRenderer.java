@@ -8,9 +8,9 @@ import org.apache.wicket.util.string.Strings;
 
 public class JavaxResultSimpleRenderer implements IScriptEngineInterlayerResultRenderer {
 	
-	JavaxScriptEngineInterlayerResult data;
+	IModel<JavaxScriptEngineInterlayerResult> data;
 	
-	public JavaxResultSimpleRenderer(JavaxScriptEngineInterlayerResult data){
+	public JavaxResultSimpleRenderer(IModel<JavaxScriptEngineInterlayerResult> data){
 		this.data = data;
 	}
 

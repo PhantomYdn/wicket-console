@@ -62,13 +62,13 @@ public class TestWicketConsoleComponents
 		assertTrue(history.size()==1);
 		ScriptHistoryItem item = history.get(0);
 		assertEquals("2+2", item.getScript());
-		Object ret = item.getReturnObject();
+
+		Object ret = item.getResultObject().getReturnedObject();
 		assertNotNull(ret);
 		assertTrue(ret instanceof Number);
 		assertEquals((double)4, ((Number)ret).doubleValue(), 0);
-		assertTrue(Strings.isEmpty(item.getOut()));
-		assertTrue(Strings.isEmpty(item.getErr()));
-		assertNull(item.getException());
+		assertTrue(Strings.isEmpty(item.getResultObject().getOut()));
+		assertTrue(Strings.isEmpty(item.getResultObject().getError()));
 		
 		tester.executeAjaxEvent("form:clearHistory", "click");
 		history = historyListView.getModelObject();

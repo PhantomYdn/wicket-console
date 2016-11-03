@@ -43,10 +43,6 @@ public class ScriptExecutor
 		ScriptHistoryItem historyItem = new ScriptHistoryItem(command);
 			IScriptEngineInterlayerResult result = getScriptEngine().eval(command);
 			historyItem.setResultObject(result);
-			historyItem.setReturnObject(result.getReturnedObject());
-			historyItem.setOut(result.getOut());
-			historyItem.setErr(result.getError());
-
 		return historyItem;
 	}
 	
