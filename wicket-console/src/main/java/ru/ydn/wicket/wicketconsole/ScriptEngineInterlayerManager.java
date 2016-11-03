@@ -8,6 +8,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Manager for objects of {@link IScriptEngineInterlayer}. If you need add new interlayer - shall make it in your init section.  
+ *
+ */
 public class ScriptEngineInterlayerManager {
 
 	public static final ScriptEngineInterlayerManager INSTANCE = new ScriptEngineInterlayerManager();

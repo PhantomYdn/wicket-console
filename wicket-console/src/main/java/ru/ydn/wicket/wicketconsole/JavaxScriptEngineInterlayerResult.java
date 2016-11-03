@@ -23,7 +23,6 @@ public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlaye
 		ctx.setWriter(new StringWriter());
 		ctx.setErrorWriter(new StringWriter());
 		ctx.setReader(new StringReader(""));
-		renderer = new JavaxResultSimpleRenderer(Model.of(this));
 	}
 	
 	protected ScriptContext getScriptContext(){
@@ -69,13 +68,4 @@ public class JavaxScriptEngineInterlayerResult implements IScriptEngineInterlaye
 	protected void setReturnedObject(Object result) {
 		this.result = result;
 	}
-	
-	public IScriptEngineInterlayerResultRenderer getRenderer() {
-		return renderer;
-	}
-
-	public void setRenderer(IScriptEngineInterlayerResultRenderer renderer) {
-		this.renderer = renderer;
-	}
-
 }
