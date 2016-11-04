@@ -33,11 +33,19 @@ public class ScriptEngineInterlayerRendererManager {
 	}
 	
 	public Component getErrorView(String id, IModel<IScriptEngineInterlayerResult> resultObject){
-		return getByResultObject(resultObject.getObject()).getErrorView(id, resultObject);
+		IScriptEngineInterlayerResultRenderer renderer = getByResultObject(resultObject.getObject());
+		if (renderer!=null){
+			return renderer.getErrorView(id, resultObject);
+		}
+		return null;
 	}
 	
 	public Component getOutView(String id, IModel<IScriptEngineInterlayerResult> resultObject){
-		return getByResultObject(resultObject.getObject()).getOutView(id, resultObject);
+		IScriptEngineInterlayerResultRenderer renderer = getByResultObject(resultObject.getObject());
+		if (renderer!=null){
+			return renderer.getOutView(id, resultObject);
+		}
+		return null;
 	}
 
 }
