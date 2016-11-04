@@ -38,9 +38,14 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 		super.onInitialize();
 		
 		ScriptHistoryItem obj =  getModelObject();
-		IScriptEngineInterlayerResultRenderer renderer =  obj.getResultObject().getRenderer();
-		add(renderer.getOutView("out"));
-		add(renderer.getErrorView("err"));
+		ScriptEngineInterlayerRendererManager renderer =  ScriptEngineInterlayerRendererManager.INSTANCE;
+		if (renderer!=null){
+			add(renderer.getOutView("out",new PropertyModel<IScriptEngineInterlayerResult>(obj, "resultObject")));
+			add(renderer.getErrorView("err",new PropertyModel<IScriptEngineInterlayerResult>(obj, "resultObject")));
+		}else{
+			add(new MultiLineLabel("out", new PropertyModel<String>(obj, "resultObject.out")).add(HideIfObjectIsEmptyBehavior.INSTANCE));
+			add(new MultiLineLabel("err", new PropertyModel<String>(obj, "resultObject.error")).add(HideIfObjectIsEmptyBehavior.INSTANCE));
+		}
 		
 		add(new MultiLineLabel("returnObject", new PropertyModel<String>(obj, "resultObject.returnedObject")).add(HideIfObjectIsEmptyBehavior.INSTANCE));
 

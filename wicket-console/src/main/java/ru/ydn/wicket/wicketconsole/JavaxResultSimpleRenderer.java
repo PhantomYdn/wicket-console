@@ -8,19 +8,17 @@ import org.apache.wicket.util.string.Strings;
 
 public class JavaxResultSimpleRenderer implements IScriptEngineInterlayerResultRenderer {
 	
-	IModel<JavaxScriptEngineInterlayerResult> data;
-	
-	public JavaxResultSimpleRenderer(IModel<JavaxScriptEngineInterlayerResult> data){
-		this.data = data;
+	public JavaxResultSimpleRenderer(){
 	}
 
-	public Component getErrorView(String id) {
+	@Override
+	public Component getErrorView(String id,IModel<IScriptEngineInterlayerResult> data) {
 		return new MultiLineLabel(id, new PropertyModel<String>(data, "error"))
 						.add(HideIfObjectIsEmptyBehavior.INSTANCE);
 	}
 
 	@Override
-	public Component getOutView(String id) {
+	public Component getOutView(String id,IModel<IScriptEngineInterlayerResult> data) {
 		return new MultiLineLabel(id, new PropertyModel<String>(data, "out"))
 						.add(HideIfObjectIsEmptyBehavior.INSTANCE);
 	}
