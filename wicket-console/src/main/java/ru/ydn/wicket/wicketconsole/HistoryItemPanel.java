@@ -12,14 +12,16 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.string.Strings;
 
-public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
+import ru.ydn.wicket.wicketconsole.behavior.HideIfObjectIsEmptyBehavior;
+
+public class HistoryItemPanel extends GenericPanel<ScriptResult>
 {
 	private Component script;
 	private Component engine;
 	
-	public HistoryItemPanel(String id, IModel<ScriptHistoryItem> model,final Component inpitField,final Component engineSelect)
+	public HistoryItemPanel(String id, IModel<ScriptResult> model,final Component inpitField,final Component engineSelect)
 	{
-		super(id, model instanceof CompoundPropertyModel?model:new CompoundPropertyModel<ScriptHistoryItem>(model));
+		super(id, model instanceof CompoundPropertyModel?model:new CompoundPropertyModel<ScriptResult>(model));
 		add(engine = new MultiLineLabel("engine").add(HideIfObjectIsEmptyBehavior.INSTANCE));
 		add(script = new MultiLineLabel("script").add(HideIfObjectIsEmptyBehavior.INSTANCE));
 		add(new AjaxLink("reuse"){
@@ -37,17 +39,11 @@ public class HistoryItemPanel extends GenericPanel<ScriptHistoryItem>
 	protected void onInitialize() {
 		super.onInitialize();
 		
-		ScriptHistoryItem obj =  getModelObject();
-		ScriptEngineInterlayerRendererManager renderer =  ScriptEngineInterlayerRendererManager.INSTANCE;
-		if (renderer!=null){
-			add(renderer.getOutView("out",new PropertyModel<IScriptEngineInterlayerResult>(obj, "resultObject")));
-			add(renderer.getErrorView("err",new PropertyModel<IScriptEngineInterlayerResult>(obj, "resultObject")));
-		}else{
-			add(new MultiLineLabel("out", new PropertyModel<String>(obj, "resultObject.out")).add(HideIfObjectIsEmptyBehavior.INSTANCE));
-			add(new MultiLineLabel("err", new PropertyModel<String>(obj, "resultObject.error")).add(HideIfObjectIsEmptyBehavior.INSTANCE));
-		}
-		
-		add(new MultiLineLabel("returnObject", new PropertyModel<String>(obj, "resultObject.returnedObject")).add(HideIfObjectIsEmptyBehavior.INSTANCE));
+		ScriptResult historyItem =  getModelObject();
+		ScriptResultRendererManager renderer =  ScriptResultRendererManager.INSTANCE;
+		add(new MultiLineLabel("out").add(HideIfObjectIsEmptyBehavior.INSTANCE));
+		add(new MultiLineLabel("error").add(HideIfObjectIsEmptyBehavior.INSTANCE));
+		add(renderer.render("result",historyItem.getResultModel()));
 
 	}
 	

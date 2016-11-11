@@ -5,61 +5,115 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import org.apache.wicket.model.IModel;
+
 public class ScriptExecutor
 {
-	private LinkedList<ScriptHistoryItem> history = new LinkedList<ScriptHistoryItem>();
+	private static final LinkedList<IScriptEngineFactory> ENGINES_FACTORIES = new LinkedList<IScriptEngineFactory>();
+	private static transient ScriptEngineManager manager;
 	
-	private Map<String,IScriptEngineInterlayer> engines;
+	static {
+		ENGINES_FACTORIES.add(new IScriptEngineFactory() {
+			
+			private Collection<String> supportedEngines;
+			
+			@Override
+			public IScriptEngine createScriptEngine(String name) {
+				if(manager==null) manager = new ScriptEngineManager();
+				ScriptEngine engine = manager.getEngineByName(name);
+				return engine!=null?new EmbeddedScriptEngine(name, engine):null;
+			}
+
+			@Override
+			public Collection<String> getSupportedEngines() {
+				if(supportedEngines==null) {
+					if(manager==null) manager = new ScriptEngineManager();
+					List<String> engines = new ArrayList<String>();
+					for(ScriptEngineFactory factory : manager.getEngineFactories()){
+						engines.add(factory.getEngineName());
+					}
+					supportedEngines = Collections.unmodifiableCollection(engines);
+				}
+				return supportedEngines;
+			}
+			
+		});
+	}
+	
+	public static void registerScriptEngineFactory(IScriptEngineFactory scriptEngineFactory) {
+		ENGINES_FACTORIES.push(scriptEngineFactory);
+	}
+	
+	public static Collection<String> getSupportedEngines() {
+		Set<String> supportedEngines = new HashSet<String>();
+		for(IScriptEngineFactory factory: ENGINES_FACTORIES) {
+			supportedEngines.addAll(factory.getSupportedEngines());
+		}
+		return supportedEngines;
+	}
+	
+	private LinkedList<ScriptResult> history = new LinkedList<ScriptResult>();
+	
+	private Map<String,IScriptEngine> runningEngines;
 	
 	public ScriptExecutor()
 	{
-		engines = new HashMap<String,IScriptEngineInterlayer>();
+		runningEngines = new HashMap<String,IScriptEngine>();
 	}
 	
-	public ScriptHistoryItem execute(String command,String scriptEngineName)
+	public ScriptResult execute(String command,String scriptEngineName)
 	{
-		ScriptHistoryItem newItem = executeWithoutHistory(command,scriptEngineName);
+		ScriptResult newItem = executeWithoutHistory(command,scriptEngineName);
 		history.add(newItem);
 		newItem.setEngine(scriptEngineName);
 		return newItem;
 	}
 
-	public ScriptHistoryItem execute(String command)
+	public ScriptResult execute(String command)
 	{
 		return execute(command,"JavaScript");
 	}
 	
-	public ScriptHistoryItem executeWithoutHistory(String command,String scriptEngineName)
+	public ScriptResult executeWithoutHistory(String command,String scriptEngineName)
 	{
-		ScriptHistoryItem historyItem = new ScriptHistoryItem(command);
-			IScriptEngineInterlayerResult result = getScriptEngine(scriptEngineName).eval(command);
-			historyItem.setResultObject(result);
-		return historyItem;
+		return getScriptEngine(scriptEngineName).eval(command);
 	}
 	
-	public IScriptEngineInterlayer getScriptEngine(String engineName)
+	public IScriptEngine getScriptEngine(String engineName)
 	{
-		IScriptEngineInterlayer engine = engines.get(engineName);
+		IScriptEngine engine = runningEngines.get(engineName);
 		if(engine==null)
 		{
-			engine = ScriptEngineInterlayerManager.INSTANCE.getByName(engineName);
-			engines.put(engineName, engine);
+			for(IScriptEngineFactory factory : ENGINES_FACTORIES){
+				engine = factory.createScriptEngine(engineName);
+				if(engine!=null) {
+					runningEngines.put(engineName, engine);
+					break;
+				}
+			}
 		}
 		return engine;
 	}
 	
 
-	public LinkedList<ScriptHistoryItem> getHistory() {
+	public LinkedList<ScriptResult> getHistory() {
 		return history;
 	}
 	

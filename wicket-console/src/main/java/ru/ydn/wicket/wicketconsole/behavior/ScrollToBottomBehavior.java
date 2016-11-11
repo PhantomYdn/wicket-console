@@ -1,4 +1,4 @@
-package ru.ydn.wicket.wicketconsole;
+package ru.ydn.wicket.wicketconsole.behavior;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;

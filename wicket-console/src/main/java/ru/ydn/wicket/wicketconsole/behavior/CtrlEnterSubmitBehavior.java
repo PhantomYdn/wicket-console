@@ -1,4 +1,4 @@
-package ru.ydn.wicket.wicketconsole;
+package ru.ydn.wicket.wicketconsole.behavior;
 
 import org.apache.wicket.ajax.attributes.AjaxCallListener;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;

@@ -1,5 +1,6 @@
 package ru.ydn.wicket.wicketconsole;
 
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -9,9 +10,10 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-public class JavaxScriptEngineInterlayer implements IScriptEngineInterlayer{
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.io.IOUtils;
 
-	private static final ScriptEngineManager manager = new ScriptEngineManager();
+public class EmbeddedScriptEngine implements IScriptEngine{
 
 	private String name;
 	private ScriptEngine engine;
@@ -19,16 +21,13 @@ public class JavaxScriptEngineInterlayer implements IScriptEngineInterlayer{
 	private transient ScriptContext ctx;
 
 	
-	public JavaxScriptEngineInterlayer() {
+	public EmbeddedScriptEngine(String name, ScriptEngine engine) {
+		this.name = name;
+		this.engine = engine;
 		this.ctx = new SimpleScriptContext();
 		ctx.setWriter(new StringWriter());
 		ctx.setErrorWriter(new StringWriter());
 		ctx.setReader(new StringReader(""));
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override
@@ -45,22 +44,22 @@ public class JavaxScriptEngineInterlayer implements IScriptEngineInterlayer{
 	}
 	
 	@Override
-	public IScriptEngineInterlayerResult eval(String command) {
-		if (engine == null){
-			engine = manager.getEngineByName(name);
-		}
-
-		JavaxScriptEngineInterlayerResult result = new JavaxScriptEngineInterlayerResult();
+	public ScriptResult eval(String command) {
+		ScriptResult result = new ScriptResult(command);
 		
 		try {
-			result.setReturnedObject(engine.eval(command, ctx));
+			Object ret = engine.eval(command, ctx);
+			result.setResultModel(new StorageModel<Object>(ret));
 			result.setOut(getContentAndClear((StringWriter)ctx.getWriter()));
 			result.setError(getContentAndClear((StringWriter)ctx.getErrorWriter()));
-			result.onUpdate();
 		} catch (ScriptException e) {
-			result.setError(e.getMessage());
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			String error = sw.toString();
+			pw.close();
+			result.setError(error);
 		}
-		
 		return result;
 	}
 

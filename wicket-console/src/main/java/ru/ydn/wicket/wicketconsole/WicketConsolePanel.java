@@ -1,6 +1,7 @@
 package ru.ydn.wicket.wicketconsole;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.script.ScriptEngineFactory;
@@ -25,12 +26,15 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.string.Strings;
 
+import ru.ydn.wicket.wicketconsole.behavior.CtrlEnterSubmitBehavior;
+import ru.ydn.wicket.wicketconsole.behavior.ScrollToBottomBehavior;
+
 
 public class WicketConsolePanel extends Panel
 {
 	private IModel<String> scriptModel = Model.of("");
 	private IModel<Boolean> keepScriptModel = Model.of(false);
-	private IModel<String> scriptEngine = Model.of("");
+	private IModel<String> scriptEngineModel = Model.of("");
 	
 	private WebMarkupContainer historyContainer;
 	private TextArea<String> scriptTextArea;
@@ -53,8 +57,10 @@ public class WicketConsolePanel extends Panel
 			
 		}).setOutputMarkupId(true);
 		form.add(scriptTextArea);
-
-		engineSelector = new DropDownChoice<String>("scriptEngine",scriptEngine,ScriptEngineInterlayerManager.INSTANCE.getNames());
+		
+		List<String> engines = new ArrayList<String>(ScriptExecutor.getSupportedEngines());
+		Collections.sort(engines);
+		engineSelector = new DropDownChoice<String>("scriptEngine",scriptEngineModel,engines);
 		engineSelector.setOutputMarkupId(true);
 		form.add(engineSelector);
 		
@@ -83,20 +89,20 @@ public class WicketConsolePanel extends Panel
 			}
 			
 		}.setDefaultFormProcessing(false));
-		IModel<List<ScriptHistoryItem>> historyModel = new LoadableDetachableModel<List<ScriptHistoryItem>>() {
+		IModel<List<ScriptResult>> historyModel = new LoadableDetachableModel<List<ScriptResult>>() {
 
 			@Override
-			protected List<ScriptHistoryItem> load() {
+			protected List<ScriptResult> load() {
 				return ScriptExecutorHolder.get().getScriptExecutor().getHistory();
 			}
 		};
 		historyContainer = new WebMarkupContainer("historyContainer");
 		historyContainer.add(ScrollToBottomBehavior.INSTANCE).setOutputMarkupId(true);
 		form.add(historyContainer);
-		ListView<ScriptHistoryItem> history = new ListView<ScriptHistoryItem>("history", historyModel) {
+		ListView<ScriptResult> history = new ListView<ScriptResult>("history", historyModel) {
 			
 			@Override
-			protected void populateItem(ListItem<ScriptHistoryItem> item) {
+			protected void populateItem(ListItem<ScriptResult> item) {
 				item.add(new HistoryItemPanel("item", item.getModel(),scriptTextArea,engineSelector));
 			}
 		};
@@ -117,7 +123,7 @@ public class WicketConsolePanel extends Panel
 		String commandScript = scriptModel.getObject();
 		if(!Strings.isEmpty(commandScript))
 		{
-			String scriptEngineName = scriptEngine.getObject();
+			String scriptEngineName = scriptEngineModel.getObject();
 			if (!Strings.isEmpty(scriptEngineName)){
 				ScriptExecutorHolder.get().getScriptExecutor().execute(commandScript,scriptEngineName);
 			}else{

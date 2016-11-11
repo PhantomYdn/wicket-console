@@ -52,23 +52,23 @@ public class TestWicketConsoleComponents
 		tester.assertComponent("form:historyContainer", WebMarkupContainer.class);
 		tester.assertComponent("form:historyContainer:history", WebMarkupContainer.class);
 		tester.assertComponent("form:script", TextArea.class);
-		ListView<ScriptHistoryItem> historyListView = (ListView<ScriptHistoryItem>)tester.getComponentFromLastRenderedPage("form:historyContainer:history");
-		List<ScriptHistoryItem> history = historyListView.getModelObject();
+		ListView<ScriptResult> historyListView = (ListView<ScriptResult>)tester.getComponentFromLastRenderedPage("form:historyContainer:history");
+		List<ScriptResult> history = historyListView.getModelObject();
 		assertTrue(history.isEmpty());
 		FormTester formTester = tester.newFormTester("form");
 		formTester.setValue("script", "2+2");
 		tester.executeAjaxEvent("form:submit", "click");
 		history = historyListView.getModelObject();
 		assertTrue(history.size()==1);
-		ScriptHistoryItem item = history.get(0);
+		ScriptResult item = history.get(0);
 		assertEquals("2+2", item.getScript());
 
-		Object ret = item.getResultObject().getReturnedObject();
+		Object ret = item.getResult();
 		assertNotNull(ret);
 		assertTrue(ret instanceof Number);
 		assertEquals((double)4, ((Number)ret).doubleValue(), 0);
-		assertTrue(Strings.isEmpty(item.getResultObject().getOut()));
-		assertTrue(Strings.isEmpty(item.getResultObject().getError()));
+		assertTrue(Strings.isEmpty(item.getOut()));
+		assertTrue(Strings.isEmpty(item.getError()));
 		
 		tester.executeAjaxEvent("form:clearHistory", "click");
 		history = historyListView.getModelObject();
