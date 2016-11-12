@@ -2,20 +2,23 @@ package ru.ydn.wicket.wicketconsole;
 
 import java.io.Serializable;
 
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
-public final class ScriptResult implements Serializable
+public final class ScriptResult implements Serializable, IDetachable
 {
-	private String script;
 	private String engine;
+	private String script;
 	private String out;
 	private String error;
-	private IModel<Object> resultModel;
+	private IModel<?> resultModel;
 	
-	public ScriptResult(String script)
+	public ScriptResult(String engine, String script)
 	{
+		this.engine = engine;
 		this.script = script;
 	}
+	
 	public String getScript() {
 		return script;
 	}
@@ -42,11 +45,11 @@ public final class ScriptResult implements Serializable
 		this.error = error;
 	}
 	
-	public IModel<Object> getResultModel() {
+	public IModel<?> getResultModel() {
 		return resultModel;
 	}
 	
-	public void setResultModel(IModel<Object> resultModel) {
+	public void setResultModel(IModel<?> resultModel) {
 		this.resultModel = resultModel;
 	}
 	
@@ -54,15 +57,20 @@ public final class ScriptResult implements Serializable
 		return resultModel!=null?resultModel.getObject():null;
 	}
 	
-	public void setResult(Object object) {
-		if(resultModel==null) resultModel = new StorageModel<Object>(object);
-		else resultModel.setObject(object);
+	public <T> void setResult(T object) {
+		if(resultModel==null) resultModel = new StorageModel<T>(object);
+		else ((IModel<T>)resultModel).setObject(object);
 	}
 	
 	
 	@Override
 	public String toString() {
 		return "ScriptHistoryItem [script=" + script + ", engine=" + engine + ", out=" + out + ", error=" + error + "]";
+	}
+
+	@Override
+	public void detach() {
+		if(resultModel!=null) resultModel.detach();
 	}
 	
 }

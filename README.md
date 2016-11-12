@@ -82,3 +82,7 @@ Math calculation
 1+Math.sin(1)*2
 ```
 
+Multiply last results by 2
+```javascript
+$result*2
+```

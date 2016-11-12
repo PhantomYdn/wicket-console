@@ -53,7 +53,5 @@ public class HistoryItemPanel extends GenericPanel<ScriptResult>
 		super.onComponentTag(tag);
 		tag.append("class", "wc-item", " ");
 	}
-	
-	
 
 }

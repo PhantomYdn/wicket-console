@@ -4,5 +4,5 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
 public interface IScriptResultRenderer {
-	public Component render(String id, IModel<Object> data);
+	public Component render(String id, IModel<?> data);
 }

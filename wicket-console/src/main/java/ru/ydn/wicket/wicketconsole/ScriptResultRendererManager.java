@@ -21,7 +21,7 @@ public class ScriptResultRendererManager implements IScriptResultRenderer{
 	}
 
 	@Override
-	public Component render(String id, IModel<Object> data) {
+	public Component render(String id, IModel<?> data) {
 		for(IScriptResultRenderer renderer:renderers) {
 			Component ret = renderer.render(id, data);
 			if(ret!=null) return ret;

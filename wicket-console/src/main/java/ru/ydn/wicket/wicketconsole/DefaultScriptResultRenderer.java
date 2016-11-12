@@ -14,7 +14,7 @@ public class DefaultScriptResultRenderer implements IScriptResultRenderer {
 	}
 
 	@Override
-	public Component render(String id, IModel<Object> data) {
+	public Component render(String id, IModel<?> data) {
 		return new MultiLineLabel(id, data)
 				.add(HideIfObjectIsEmptyBehavior.INSTANCE);
 	}

@@ -47,7 +47,7 @@ public class ScriptExecutor
 					if(manager==null) manager = new ScriptEngineManager();
 					List<String> engines = new ArrayList<String>();
 					for(ScriptEngineFactory factory : manager.getEngineFactories()){
-						engines.add(factory.getEngineName());
+						engines.addAll(factory.getNames());
 					}
 					supportedEngines = Collections.unmodifiableCollection(engines);
 				}

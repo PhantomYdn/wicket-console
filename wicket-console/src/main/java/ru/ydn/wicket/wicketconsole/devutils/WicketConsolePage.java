@@ -1,5 +1,6 @@
 package ru.ydn.wicket.wicketconsole.devutils;
 
+import org.apache.wicket.Page;
 import org.apache.wicket.devutils.DevUtilsPage;
 import org.apache.wicket.devutils.inspector.InspectorPage;
 import org.apache.wicket.devutils.inspector.LiveSessionsPage;
@@ -14,6 +15,19 @@ import ru.ydn.wicket.wicketconsole.WicketConsolePanel;
 
 public class WicketConsolePage extends DevUtilsPage
 {
+	
+	private static Class<? extends Page> wicketConsolePageImplementation = WicketConsolePage.class;
+	
+	public static Class<? extends Page> getWicketConsolePageImplementation() {
+		return wicketConsolePageImplementation;
+	}
+	
+	public static void setWicketConsolePageImplementation(Class<? extends Page> wicketConsolePageImplementation) {
+		
+		WicketConsolePage.wicketConsolePageImplementation 
+									= wicketConsolePageImplementation!=null
+										?wicketConsolePageImplementation:WicketConsolePage.class;
+	}
 
 	public WicketConsolePage(PageParameters parameters)
 	{

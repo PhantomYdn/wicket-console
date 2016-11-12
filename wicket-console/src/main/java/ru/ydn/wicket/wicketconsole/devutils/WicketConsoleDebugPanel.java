@@ -52,7 +52,7 @@ public class WicketConsoleDebugPanel extends StandardDebugPanel
 
 	@Override
 	protected Class<? extends Page> getLinkPageClass() {
-		return WicketConsolePage.class;
+		return WicketConsolePage.getWicketConsolePageImplementation();
 	}
 
 }

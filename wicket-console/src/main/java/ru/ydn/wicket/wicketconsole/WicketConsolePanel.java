@@ -34,7 +34,7 @@ public class WicketConsolePanel extends Panel
 {
 	private IModel<String> scriptModel = Model.of("");
 	private IModel<Boolean> keepScriptModel = Model.of(false);
-	private IModel<String> scriptEngineModel = Model.of("");
+	private IModel<String> scriptEngineModel = Model.of("JavaScript");
 	
 	private WebMarkupContainer historyContainer;
 	private TextArea<String> scriptTextArea;
@@ -106,6 +106,7 @@ public class WicketConsolePanel extends Panel
 				item.add(new HistoryItemPanel("item", item.getModel(),scriptTextArea,engineSelector));
 			}
 		};
+		history.setReuseItems(true);
 		historyContainer.add(history);
 
 		add(form);
