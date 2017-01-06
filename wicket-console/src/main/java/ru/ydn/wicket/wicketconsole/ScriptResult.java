@@ -57,6 +57,7 @@ public final class ScriptResult implements Serializable, IDetachable
 		return resultModel!=null?resultModel.getObject():null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T> void setResult(T object) {
 		if(resultModel==null) resultModel = new StorageModel<T>(object);
 		else ((IModel<T>)resultModel).setObject(object);

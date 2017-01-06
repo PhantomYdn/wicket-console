@@ -10,10 +10,11 @@ Key features:
 1. Very small size (<25Kb)
 2. Ajax enabled
 3. Contextual
-  * ScriptContext has been stored on server side: you can write function and then call from subsequent commands
+  * ScriptContext is stored on server side: you can write function and then call from subsequent commands
 4. Embeddedable into your wicket pages
 5. Available throught Wicket DebugBar panel
   * Dependency to wicket-devutils is optional
+6. Pluggable architecture for script engines: you can write your own!
 
 Installation
 ------------
@@ -22,7 +23,7 @@ To use wicket console library in your code add following into your pom.xml
 		<dependency>
 		      <groupId>ru.ydn.wicket.wicket-console</groupId>
 		      <artifactId>wicket-console</artifactId>
-		      <version>1.0</version>
+		      <version>1.1</version>
 		</dependency>
 ```
 
@@ -65,7 +66,7 @@ Run demo:
 cd wicket-console-demo
 mvn jetty:run
 ```
-Then goto http://localhost:8081/
+Then goto http://localhost:8080/
 
 Examples
 --------
