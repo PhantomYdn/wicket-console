@@ -26,13 +26,12 @@
 	<groupId>ru.ydn.wicket.wicket-console</groupId>
 	<artifactId>wicket-console-demo</artifactId>
 	<packaging>war</packaging>
-	<version>1.1-SNAPSHOT</version>
 	<name>WicketConsoleDemo</name>
 	<dependencies>
 		<dependency>
 		      <groupId>ru.ydn.wicket.wicket-console</groupId>
 		      <artifactId>wicket-console</artifactId>
-		      <version>1.1-SNAPSHOT</version>
+		      <version>${project.version}</version>
 		</dependency>
 		<!--  WICKET DEPENDENCIES -->
 		<dependency>
