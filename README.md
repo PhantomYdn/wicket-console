@@ -7,7 +7,7 @@ Wicket Console for JVM 1.6+
 
 Key features:
 
-1. Very small size (<25Kb)
+1. Very small size (<35Kb)
 2. Ajax enabled
 3. Contextual
   * ScriptContext is stored on server side: you can write function and then call from subsequent commands
