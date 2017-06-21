@@ -40,9 +40,16 @@ public class WicketConsolePanel extends Panel
 	private TextArea<String> scriptTextArea;
 	private DropDownChoice<String> engineSelector;
 	
-	public WicketConsolePanel(String id)
+	private IScriptContext context;
+	
+	public WicketConsolePanel(String id){
+		this(id,null);
+	}
+	
+	public WicketConsolePanel(String id,IScriptContext context)
 	{
 		super(id);
+		this.context = context;
 
 		setOutputMarkupId(true);
 		Form<String> form =new Form<String>("form");		
@@ -126,7 +133,7 @@ public class WicketConsolePanel extends Panel
 		{
 			String scriptEngineName = scriptEngineModel.getObject();
 			if (!Strings.isEmpty(scriptEngineName)){
-				ScriptExecutorHolder.get().getScriptExecutor().execute(commandScript,scriptEngineName);
+				ScriptExecutorHolder.get().getScriptExecutor().execute(commandScript,scriptEngineName,context);
 			}else{
 				ScriptExecutorHolder.get().getScriptExecutor().execute(commandScript);
 			}

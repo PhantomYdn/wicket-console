@@ -1,10 +1,5 @@
 package ru.ydn.wicket.wicketconsole;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,14 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
-
-import org.apache.wicket.model.IModel;
 
 public class ScriptExecutor
 {
@@ -78,9 +68,9 @@ public class ScriptExecutor
 		runningEngines = new HashMap<String,IScriptEngine>();
 	}
 	
-	public ScriptResult execute(String command,String scriptEngineName)
+	public ScriptResult execute(String command,String scriptEngineName,IScriptContext context)
 	{
-		ScriptResult newItem = executeWithoutHistory(command,scriptEngineName);
+		ScriptResult newItem = executeWithoutHistory(command,scriptEngineName,context);
 		history.add(newItem);
 		newItem.setEngine(scriptEngineName);
 		return newItem;
@@ -88,12 +78,12 @@ public class ScriptExecutor
 
 	public ScriptResult execute(String command)
 	{
-		return execute(command,"JavaScript");
+		return execute(command,"JavaScript",null);
 	}
 	
-	public ScriptResult executeWithoutHistory(String command,String scriptEngineName)
+	public ScriptResult executeWithoutHistory(String command,String scriptEngineName,IScriptContext context)
 	{
-		return getScriptEngine(scriptEngineName).eval(command);
+		return getScriptEngine(scriptEngineName).eval(command,context);
 	}
 	
 	public IScriptEngine getScriptEngine(String engineName)
