@@ -2,6 +2,10 @@ package ru.ydn.wicket.wicketconsole;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -45,8 +49,14 @@ public class EmbeddedScriptEngine implements IScriptEngine{
 	}
 	
 	@Override
-	public ScriptResult eval(String command) {
+	public ScriptResult eval(String command,IScriptContext context) {
 		ScriptResult result = new ScriptResult(name, command);
+		if (context!=null){
+			Set<Entry<String, Object>> bindings = context.getBindings().entrySet();
+			for (Entry<String, Object> binding : bindings) {
+				ctx.setAttribute(binding.getKey(), binding.getValue(), ScriptContext.ENGINE_SCOPE);
+			}
+		}
 		
 		try {
 			Object ret = engine.eval(command, ctx);
