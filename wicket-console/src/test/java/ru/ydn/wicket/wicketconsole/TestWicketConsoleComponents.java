@@ -38,8 +38,8 @@ public class TestWicketConsoleComponents
 	@Test
 	public void testSimpleExecution() {
 		ScriptExecutor se = ScriptExecutorHolder.get().getScriptExecutor();
-		assertEquals(4, se.executeWithoutHistory("2+2","JavaScript",null).getResult());
-		assertEquals(4.0, se.executeWithoutHistory("var a=2; a+a","JavaScript",null).getResult());
+		assertEquals((double)4, ((Number)se.executeWithoutHistory("2+2","JavaScript",null).getResult()).doubleValue(), 0);
+		assertEquals((double)4, ((Number)se.executeWithoutHistory("var a=2; a+a","JavaScript",null).getResult()).doubleValue(), 0);
 	}
 	
 	@Test
