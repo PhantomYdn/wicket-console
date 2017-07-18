@@ -1,5 +1,6 @@
 package ru.ydn.wicket.wicketconsole;
 
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -65,8 +66,11 @@ public class EmbeddedScriptEngine implements IScriptEngine{
 			result.setResultModel(new StorageModel<Object>(ret));
 			result.setOut(getContentAndClear((StringWriter)ctx.getWriter()));
 			result.setError(getContentAndClear((StringWriter)ctx.getErrorWriter()));
-		} catch (ScriptException e) {
-			result.setError(e.getMessage());
+		} catch (Throwable e) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			result.setError(sw.toString());
 		}
 		return result;
 	}
@@ -81,7 +85,7 @@ public class EmbeddedScriptEngine implements IScriptEngine{
 						asJSONComatibleAvailable = false;
 					}
 				}
-				return JSONObject.valueToString(ret);
+				return JSONObject.wrap(ret);
 			}
 			return ret;
 		} catch (JSONException e) {
