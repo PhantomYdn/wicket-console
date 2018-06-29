@@ -68,11 +68,12 @@
 
 		<!--  JETTY DEPENDENCIES FOR TESTING  -->
 		<dependency>
-            <groupId>org.eclipse.jetty.aggregate</groupId>
-            <artifactId>jetty-all</artifactId>
-            <version>${jetty.version}</version>
-            <scope>provided</scope>
-        </dependency>
+		    <groupId>org.eclipse.jetty.aggregate</groupId>
+		    <artifactId>jetty-all</artifactId>
+		    <classifier>uber</classifier>
+		    <version>${jetty.version}</version>
+		    <scope>provided</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>
@@ -123,13 +124,6 @@
 						</connector>
 					</connectors>
 				</configuration>
-				<dependencies>
-                <dependency>
-                    <groupId>org.eclipse.jetty.aggregate</groupId>
-                    <artifactId>jetty-all</artifactId>
-                    <version>${jetty.version}</version>
-                </dependency>
-                </dependencies>
 			</plugin>
 		</plugins>
 	</build>

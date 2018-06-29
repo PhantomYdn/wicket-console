@@ -81,7 +81,7 @@ public class WicketConsolePanel extends Panel
 		form.add(new AjaxButton("submit")
 		{
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+			protected void onSubmit(AjaxRequestTarget target) {
 				onScriptExecute(target);
 			}
 			
@@ -89,7 +89,7 @@ public class WicketConsolePanel extends Panel
 		form.add(new AjaxButton("clearHistory")
 		{
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+			protected void onSubmit(AjaxRequestTarget target) {
 				ScriptExecutorHolder.get().getScriptExecutor().getHistory().clear();
 				target.add(historyContainer);
 				target.focusComponent(scriptTextArea);

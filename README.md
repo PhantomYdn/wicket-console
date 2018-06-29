@@ -3,7 +3,7 @@
 wicket-console
 ==============
 
-Wicket Console for JVM 1.6+
+Wicket Console for JVM 1.8+
 
 Key features:
 
@@ -23,7 +23,7 @@ To use wicket console library in your code add following into your pom.xml
 		<dependency>
 		      <groupId>ru.ydn.wicket.wicket-console</groupId>
 		      <artifactId>wicket-console</artifactId>
-		      <version>1.1</version>
+		      <version>1.x</version>
 		</dependency>
 ```
 
