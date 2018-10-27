@@ -1,6 +1,9 @@
 package ru.ydn.wicket.wicketconsole;
 
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -11,6 +14,8 @@ public final class ScriptResult implements Serializable, IDetachable
 	private String script;
 	private String out;
 	private String error;
+	private Instant start;
+	private Instant finish;
 	private IModel<?> resultModel;
 	
 	public ScriptResult(String engine, String script)
@@ -61,6 +66,28 @@ public final class ScriptResult implements Serializable, IDetachable
 	public <T> void setResult(T object) {
 		if(resultModel==null) resultModel = new StorageModel<T>(object);
 		else ((IModel<T>)resultModel).setObject(object);
+	}
+	
+	public ScriptResult start() {
+		start = Instant.now();
+		return this;
+	}
+	
+	public ScriptResult finish() {
+		finish = Instant.now();
+		return this;
+	}
+	
+	public Instant getStart() {
+		return start;
+	}
+	
+	public Instant getFinish() {
+		return finish;
+	}
+	
+	public Duration getDuration() {
+		return start==null || finish ==null ? null : Duration.between(start, finish);
 	}
 	
 	

@@ -4,6 +4,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -44,6 +45,7 @@ public class HistoryItemPanel extends GenericPanel<ScriptResult>
 		add(new MultiLineLabel("out").add(HideIfObjectIsEmptyBehavior.INSTANCE));
 		add(new MultiLineLabel("error").add(HideIfObjectIsEmptyBehavior.INSTANCE));
 		add(renderer.render("result",historyItem.getResultModel()));
+		add(new Label("duration").add(HideIfObjectIsEmptyBehavior.INSTANCE));
 
 	}
 	

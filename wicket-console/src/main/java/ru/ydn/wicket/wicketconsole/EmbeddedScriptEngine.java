@@ -59,6 +59,7 @@ public class EmbeddedScriptEngine implements IScriptEngine{
 			}
 		}
 		
+		result.start();
 		try {
 			Object ret = engine.eval(command, ctx);
 			ctx.getBindings(ScriptContext.ENGINE_SCOPE).put("$result", ret);
@@ -72,6 +73,7 @@ public class EmbeddedScriptEngine implements IScriptEngine{
 			e.printStackTrace(pw);
 			result.setError(sw.toString());
 		}
+		result.finish();
 		return result;
 	}
 	

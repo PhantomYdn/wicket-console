@@ -78,6 +78,15 @@ div.wc-item-exception
 	color: red;
 }
 
+div.wc-item-duration:BEFORE
+{
+	content: "Duration: ";
+}
+div.wc-item-duration {
+	color: grey;
+	font-style: italic;
+}
+
 .wc-item-reuse
 {
 	padding-left: 2px; 
