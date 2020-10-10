@@ -65,13 +65,14 @@ public class EmbeddedScriptEngine implements IScriptEngine{
 			ctx.getBindings(ScriptContext.ENGINE_SCOPE).put("$result", ret);
 			ret = tryConvertToJSON(ret);
 			result.setResultModel(new StorageModel<Object>(ret));
-			result.setOut(getContentAndClear((StringWriter)ctx.getWriter()));
-			result.setError(getContentAndClear((StringWriter)ctx.getErrorWriter()));
 		} catch (Throwable e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			result.setError(sw.toString());
+		} finally {
+			result.setOut(getContentAndClear((StringWriter)ctx.getWriter()));
+			result.prependError(getContentAndClear((StringWriter)ctx.getErrorWriter()));
 		}
 		result.finish();
 		return result;

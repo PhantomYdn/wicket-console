@@ -43,13 +43,24 @@ public final class ScriptResult implements Serializable, IDetachable
 	public void setOut(String out) {
 		this.out = out;
 	}
+	public void appendOut(String out) {
+		if(this.out==null) this.out = out;
+		else this.out = this.out + out;
+	}
 	public String getError() {
 		return error;
 	}
 	public void setError(String error) {
 		this.error = error;
 	}
-	
+	public void prependError(String error) {
+		if(this.error==null) this.error = error;
+		else this.error = error + this.error;
+	}
+	public void appendError(String error) {
+		if(this.error==null) this.error = error;
+		else this.error = this.error + error;
+	}
 	public IModel<?> getResultModel() {
 		return resultModel;
 	}
