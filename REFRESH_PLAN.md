@@ -111,9 +111,15 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       There are no `<repositories>` (nothing dead to remove); OSSRH `distributionManagement`/nexus-staging stay until R (D11)
       — 2026-09-25: none of them was bound to a phase, so the build output is unchanged (6/0 + 1/0). No m2e
       lifecycle-mapping or maven-bundle-plugin existed. `.travis.yml` still calls cobertura/coveralls: removed with Travis in R1
-- [ ] A5 Pin every build plugin once in root `<pluginManagement>` (Appendix B; wicket-orientdb's versions); release-profile
+- [x] A5 Pin every build plugin once in root `<pluginManagement>` (Appendix B; wicket-orientdb's versions); release-profile
       source/javadoc/gpg pinned to current (javadoc 2.10.4 doesn't run on current JDKs); nexus-staging and the release
-      plugin left for R. Add `maven-enforcer-plugin`: `requireMavenVersion [3.9,)`, `requireJavaVersion [21,)`
+      plugin left for R. Add `maven-enforcer-plugin`: `requireMavenVersion [3.9,)`, `requireJavaVersion [21,)` — 2026-09-25:
+      clean/resources 3.5.0, compiler 3.16.0 (config moved here), surefire 3.6.0, jar/war 3.5.1, install/deploy 3.2.0,
+      site 3.22.0, enforcer 3.6.3, source 3.4.0, javadoc 3.12.0, gpg 3.2.8, release 2.5.3 (→ R), dependency 3.11.0,
+      wrapper 3.3.4, versions 2.22.0, jetty `${jetty.version}` (the demo's version moved here). `versions:display-plugin-updates
+      -Prelease`: "All plugins have a version specified"; only release, jetty (A9) and nexus-staging (the build extension
+      keeps its version in the profile until R) remain outdated. Enforcer runs in every module (build-time only; consumers
+      don't inherit this parent). 6/0 + 1/0 with surefire 3.6.0
 - [ ] A6 JUnit 4.12 → 4.13.2 (test scope; D12)
 - [ ] A7 Wicket 8.3.0 → 8.15.0 (core, extensions, devutils; D3); drop the redundant `${wicket.version}` on
       `wicket-extensions` in the module pom
