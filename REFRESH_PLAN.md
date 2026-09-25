@@ -253,7 +253,10 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
       (`child.*.inherit.append.path=false`), the bogus module `url` `http://maven.apache.org` is gone, scm `connection`
       fixed to `scm:git:https://…`. Release plugin 3.3.1; deprecated `useReleaseProfile` dropped; default next version
       after `1.4` is `1.5-SNAPSHOT` (matches D8)
-- [ ] R4 `.github/dependabot.yml` (maven + github-actions, weekly, grouped); ignore majors of Wicket/servlet/Jetty until their stages
+- [x] R4 `.github/dependabot.yml` (maven + github-actions, weekly, grouped); ignore majors of Wicket/servlet/Jetty until their stages
+      — 2026-09-25: groups for Maven plugins, GraalVM and all GitHub Actions; ignored until their stages: Wicket majors,
+      `javax.servlet-api`, Jetty minor/major (demo), GraalVM minor/major (follows Orienteer's 25.0.x), JUnit 4 major,
+      Log4j major, maven-site-plugin 4 (milestones only). Validated against the Dependabot JSON schema; active once pushed
 - [ ] R5 JaCoCo report (replaces cobertura/coveralls), no thresholds
 - [ ] R6 Local validation without any upload: `-Prelease -Dgpg.skip` builds the release artifacts; list what a Central
       bundle would contain; publishing runbook below
