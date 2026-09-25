@@ -12,6 +12,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
+import javax.script.SimpleScriptContext;
 
 /**
  * Tiny JSR-223 engine for the tests. Statements are separated by {@code ;} or new lines (so string literals can't
@@ -23,6 +24,9 @@ import javax.script.SimpleBindings;
  * <li>{@code expr}: numbers, {@code "strings"} and variables (engine or global scope) combined with {@code +} and
  * {@code *} and parentheses; {@code +} with a string concatenates</li>
  * </ul>
+ * Like GraalJS ({@code GraalJSScriptEngine}), it keeps state only in bindings it created itself
+ * ({@link #createBindings()}): for any other engine-scope bindings every {@code eval} works on a fresh copy, so
+ * assignments are lost afterwards.
  */
 public class CalcScriptEngine extends AbstractScriptEngine
 {
@@ -37,6 +41,19 @@ public class CalcScriptEngine extends AbstractScriptEngine
 
 	@Override
 	public Object eval(String script, ScriptContext context) throws ScriptException {
+		Bindings engineScope = context.getBindings(ScriptContext.ENGINE_SCOPE);
+		if(!(engineScope instanceof CalcBindings)) {
+			// What GraalJS does with bindings it didn't create: a new scope per eval, filled with a copy of them
+			CalcBindings copy = new CalcBindings();
+			if(engineScope != null) copy.putAll(engineScope);
+			SimpleScriptContext perEval = new SimpleScriptContext();
+			perEval.setBindings(copy, ScriptContext.ENGINE_SCOPE);
+			perEval.setBindings(context.getBindings(ScriptContext.GLOBAL_SCOPE), ScriptContext.GLOBAL_SCOPE);
+			perEval.setWriter(context.getWriter());
+			perEval.setErrorWriter(context.getErrorWriter());
+			perEval.setReader(context.getReader());
+			context = perEval;
+		}
 		Object result = null;
 		for(String statement : script.split("[;\\n]")) {
 			statement = statement.trim();
@@ -59,7 +76,12 @@ public class CalcScriptEngine extends AbstractScriptEngine
 
 	@Override
 	public Bindings createBindings() {
-		return new SimpleBindings();
+		return new CalcBindings();
+	}
+
+	/** The engine's own bindings type (GraalJS: {@code GraalJSBindings}) */
+	private static final class CalcBindings extends SimpleBindings
+	{
 	}
 
 	@Override

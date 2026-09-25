@@ -143,9 +143,15 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       on JDK 21.0.11 and 25.0.4 (Jetty banner `jvm …`) `GET /` → 302 → 200 with the panel and the DebugBar, and
       `WicketConsolePage` → 200 ("Wicket Version: 8.15.0"). No ASM override needed: the war has no Java 25 class files
       (re-checked in A10 with GraalJS). `Start.java` compiles against 9.4.58. The now-unused quickstart `keystore` is kept (X)
-- [ ] A10 GraalJS: `EmbeddedScriptEngine` uses engine-created bindings (D7) with a library regression test (the test
-      engine keeps state only in its own bindings, like GraalJS); demo gets GraalJS 25.0.4 (runtime) and a JS smoke test
-      (arithmetic, state across commands, output capture, error on a bad script)
+- [x] A10 GraalJS: `EmbeddedScriptEngine` uses engine-created bindings (D7) with a library regression test (the test
+      engine keeps state only in its own bindings, like GraalJS) — 2026-09-25: `ctx.setBindings(engine.createBindings(),
+      ENGINE_SCOPE)` in the constructor (skipped if an engine returns `null`; OrientDB's `OSQLScriptEngine` returns a
+      `SimpleBindings`). `CalcScriptEngine` now mimics `GraalJSScriptEngine` (foreign bindings → fresh copy per eval);
+      new `testEngineStateSurvivesBetweenCommands`. Before the fix it and `testOutputErrorsAndState` fail
+      ("counter is not defined", `x` lost); after: 7/0 + 1/0. Nashorn (which stored its global inside any bindings) and
+      the `$result`/`IScriptContext` bindings behave as before
+- [ ] A10 Demo gets GraalJS 25.0.4 (runtime) and a JS smoke test (arithmetic, state across commands, output capture,
+      error on a bad script, Java objects bound via `IScriptContext`, panel default engine)
 - [ ] A11 `./mvnw clean verify` green on 21 **and** 25; `./mvnw install`; confirm the jar and the parent pom in
       `~/.m2/repository/ru/ydn/wicket/wicket-console/`, class files major 65; `--add-opens` only where a test proves it
 - [ ] A11 Update `AGENTS.md` files (build status, stack) and write "Handoff to Orienteer" below
@@ -275,7 +281,7 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
 
 | Test class | `@Test` | `@Ignore` | Baseline JDK 21: run / errors | After A2 (JDK 21): run / failures | Notes |
 |---|---|---|---|---|---|
-| `TestWicketConsoleComponents` | 3 → 6 (A2) | 0 | 3 / **2** (NPE, no `"JavaScript"` engine) | 6 / 0 | scripts run on the test-only `Calc` engine (D4) |
+| `TestWicketConsoleComponents` | 3 → 6 (A2) → 7 (A10) | 0 | 3 / **2** (NPE, no `"JavaScript"` engine) | 6 / 0 | scripts run on the test-only `Calc` engine (D4) |
 | demo `TestHomePage` | 1 | 0 | 1 / 0 | 1 / 0 | renders `HomePage` with the panel and the DebugBar |
 
 ## Appendix D — Stage B/C inventory (2026-09-25)

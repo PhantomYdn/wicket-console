@@ -31,6 +31,10 @@ public class EmbeddedScriptEngine implements IScriptEngine{
 		this.name = name;
 		this.engine = engine;
 		this.ctx = new SimpleScriptContext();
+		// Engine-created bindings keep the engine's state between commands: GraalJS starts a new JS context on every
+		// eval when the engine-scope bindings are not its own (a plain SimpleBindings)
+		Bindings engineBindings = engine.createBindings();
+		if(engineBindings!=null) ctx.setBindings(engineBindings, ScriptContext.ENGINE_SCOPE);
 		ctx.setWriter(new StringWriter());
 		ctx.setErrorWriter(new StringWriter());
 		ctx.setReader(new StringReader(""));

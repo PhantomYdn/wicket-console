@@ -82,6 +82,16 @@ public class TestWicketConsoleComponents
 	}
 	
 	@Test
+	public void testEngineStateSurvivesBetweenCommands() {
+		// D7: like GraalJS, the Calc engine keeps state only in bindings it created, so EmbeddedScriptEngine must use them
+		ScriptExecutor se = ScriptExecutorHolder.get().getScriptExecutor();
+		se.execute("counter = 40", CalcScriptEngineFactory.NAME, null);
+		ScriptResult result = se.execute("counter + 2", CalcScriptEngineFactory.NAME, null);
+		assertTrue(result.getError(), Strings.isEmpty(result.getError()));
+		assertEquals(42L, result.getResult());
+	}
+	
+	@Test
 	public void testMissingEngine() {
 		ScriptExecutor se = ScriptExecutorHolder.get().getScriptExecutor();
 		ScriptResult result = se.executeWithoutHistory("2+2", "NoSuchEngine", null);
