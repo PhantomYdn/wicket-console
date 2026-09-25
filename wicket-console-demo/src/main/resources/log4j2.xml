@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Demo only: the library never ships a logging binding or configuration -->
+<Configuration status="WARN">
+	<Appenders>
+		<Console name="Stdout" target="SYSTEM_OUT">
+			<PatternLayout pattern="%-5p - %-26.26c{1} - %m%n"/>
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="Stdout"/>
+		</Root>
+	</Loggers>
+</Configuration>

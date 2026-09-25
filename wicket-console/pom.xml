@@ -63,5 +63,61 @@
 				</excludes>
 			</testResource>
 		</testResources>
+		<plugins>
+			<!-- Library hygiene (REFRESH_PLAN.md D10): consumers choose their logging backend and their script engines,
+			     so none may reach this jar's compile/runtime classpath. Test scope is allowed. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>enforce-library-hygiene</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<message>No logging binding and no script engine in the library (compile/runtime scope): see REFRESH_PLAN.md D4/D10</message>
+									<excludes>
+										<!-- groupId:artifactId:version:type:scope -->
+										<exclude>org.slf4j:slf4j-log4j12:*:*:compile</exclude>
+										<exclude>org.slf4j:slf4j-log4j12:*:*:runtime</exclude>
+										<exclude>org.slf4j:slf4j-reload4j:*:*:compile</exclude>
+										<exclude>org.slf4j:slf4j-reload4j:*:*:runtime</exclude>
+										<exclude>org.slf4j:slf4j-simple:*:*:compile</exclude>
+										<exclude>org.slf4j:slf4j-simple:*:*:runtime</exclude>
+										<exclude>org.slf4j:slf4j-jdk14:*:*:compile</exclude>
+										<exclude>org.slf4j:slf4j-jdk14:*:*:runtime</exclude>
+										<exclude>org.slf4j:slf4j-nop:*:*:compile</exclude>
+										<exclude>org.slf4j:slf4j-nop:*:*:runtime</exclude>
+										<exclude>org.apache.logging.log4j:log4j-slf4j-impl:*:*:compile</exclude>
+										<exclude>org.apache.logging.log4j:log4j-slf4j-impl:*:*:runtime</exclude>
+										<exclude>org.apache.logging.log4j:log4j-slf4j2-impl:*:*:compile</exclude>
+										<exclude>org.apache.logging.log4j:log4j-slf4j2-impl:*:*:runtime</exclude>
+										<exclude>org.apache.logging.log4j:log4j-core:*:*:compile</exclude>
+										<exclude>org.apache.logging.log4j:log4j-core:*:*:runtime</exclude>
+										<exclude>ch.qos.logback:*:*:*:compile</exclude>
+										<exclude>ch.qos.logback:*:*:*:runtime</exclude>
+										<exclude>log4j:log4j:*:*:compile</exclude>
+										<exclude>log4j:log4j:*:*:runtime</exclude>
+										<exclude>ch.qos.reload4j:*:*:*:compile</exclude>
+										<exclude>ch.qos.reload4j:*:*:*:runtime</exclude>
+										<exclude>org.graalvm.js:*:*:*:compile</exclude>
+										<exclude>org.graalvm.js:*:*:*:runtime</exclude>
+										<exclude>org.graalvm.polyglot:*:*:*:compile</exclude>
+										<exclude>org.graalvm.polyglot:*:*:*:runtime</exclude>
+										<exclude>org.openjdk.nashorn:*:*:*:compile</exclude>
+										<exclude>org.openjdk.nashorn:*:*:*:runtime</exclude>
+										<exclude>org.mozilla:rhino-engine:*:*:compile</exclude>
+										<exclude>org.mozilla:rhino-engine:*:*:runtime</exclude>
+									</excludes>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
   </build>
 </project>

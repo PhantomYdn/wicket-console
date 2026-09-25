@@ -125,10 +125,18 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       `wicket-extensions` in the module pom — 2026-09-25: no source changes; 6/0 + 1/0. Transitive: openjson 1.0.8 → 1.0.11,
       commons-fileupload 1.4 → 1.5, commons-io 2.5 → 2.6, commons-collections4 4.2 → 4.4, danekja 1.8.3 → 1.8.6;
       slf4j-api stays 1.7.25 (identical to what Orienteer already gets from Wicket 8.15)
-- [ ] A8 Library hygiene: servlet API and wicket-devutils `provided`; no logging binding or logging config in the jar
+- [x] A8 Library hygiene: servlet API and wicket-devutils `provided`; no logging binding or logging config in the jar
       (verify with `jar tf`); enforcer `bannedDependencies` for logging bindings and script engines in the library's
       compile/runtime scope (D10, verified with a probe); demo: log4j 1.2.17 + `slf4j-log4j12` (EOL, CVEs) →
-      `log4j-slf4j-impl` 2.26.1 + `log4j2.xml`
+      `log4j-slf4j-impl` 2.26.1 + `log4j2.xml` — 2026-09-25: the library was already clean (compile: wicket-core,
+      wicket-extensions; `provided`: servlet API, wicket-devutils; JUnit `test`); jar = 29 classes + 4 markup/CSS files,
+      2 `.properties`, `META-INF/services/org.apache.wicket.IInitializer`, no logging config. No hard pins reach consumers
+      (versions come from the parent's `dependencyManagement`, which Orienteer doesn't inherit). Enforcer execution
+      `enforce-library-hygiene` in the library pom bans SLF4J bindings, `log4j-slf4j(2)-impl`, `log4j-core`, logback,
+      log4j 1.x, reload4j, GraalJS/polyglot, nashorn-core, rhino-engine in compile/runtime scope. Probes: `log4j-slf4j-impl`
+      compile → fail, runtime → fail, test → pass; `js-scriptengine` compile → fail, `js` (pom) runtime → fail, test → pass.
+      Demo war now ships log4j-api/core/slf4j-impl 2.26.1 instead of log4j 1.2.17 (same console pattern, root INFO;
+      version in property `log4j.version`)
 - [ ] A9 Demo: Jetty 9.4.12 → 9.4.58 (`jetty-maven-plugin`, `provided` `jetty-all`); drop the Jetty 7 connector config the
       9.4 plugin ignores; `jetty:run` serves the home page on JDK 21 and 25 (ASM ≥ 9.8 for the plugin only if JDK 25 needs it)
 - [ ] A10 GraalJS: `EmbeddedScriptEngine` uses engine-created bindings (D7) with a library regression test (the test
