@@ -67,6 +67,10 @@ public class WicketConsolePanel extends Panel
 		
 		List<String> engines = new ArrayList<String>(ScriptExecutor.getSupportedEngines());
 		Collections.sort(engines);
+		// No "JavaScript" engine (JDK 15+ without GraalJS/Nashorn): preselect the first available engine instead
+		if(!engines.isEmpty() && !engines.contains(scriptEngineModel.getObject())) {
+			scriptEngineModel.setObject(engines.get(0));
+		}
 		engineSelector = new DropDownChoice<String>("scriptEngine",scriptEngineModel,engines);
 		engineSelector.setOutputMarkupId(true);
 		form.add(engineSelector);

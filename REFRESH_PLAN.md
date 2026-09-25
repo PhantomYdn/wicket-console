@@ -15,7 +15,7 @@ Started: 2026-09-25. Versions below were checked on Maven Central on that date �
 | Phase | Goal | Depends on | Unblocks Orienteer | Status |
 |---|---|---|---|---|
 | P0 | AI initialization: AGENTS.md files + this plan | — | — | done |
-| A | Stage A: JDK 21/25 build on the **same** framework majors (Wicket 8.15, javax), works without a JS engine, `./mvnw install` | P0 | P3 | todo |
+| A | Stage A: JDK 21/25 build on the **same** framework majors (Wicket 8.15, javax), works without a JS engine, `./mvnw install` | P0 | P3 | in progress |
 | B | Stage B: Wicket 9.x, still javax; JUnit 5 for the tests → `1.5` | A, `1.4` release (D8) | P5 | todo — not started |
 | C | Stage C: Wicket 10.x, `jakarta.servlet` 6, `wicket-tester` → `2.0` | B (D8) | P6 | todo |
 | R | Release & CI: GitHub Actions, Maven Central via the Central Portal: `1.4-SNAPSHOT` now, `1.4` after Orienteer P3 is green (D8/D11) | A | P3 "resolvable from a real repo" | todo |
@@ -93,10 +93,17 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       tabs for Java/HTML/CSS, nothing for the mixed poms; no trailing-whitespace or final-newline rules; **no reformat**)
       — 2026-09-25, wrapper plugin 3.3.4 (scripts identical to wicket-orientdb's). Measured: all 24 Java, 4 HTML and 2 CSS
       files indent with tabs (3 Java + 1 HTML also have some space-indented lines); all 4 poms mix both; 8 files lack a final newline
-- [ ] A2 Script engines without Nashorn: missing engine → error `ScriptResult` (D5); `WicketConsolePanel` default-engine
+- [x] A2 Script engines without Nashorn: missing engine → error `ScriptResult` (D5); `WicketConsolePanel` default-engine
       fallback (D6); library tests use a test-only JSR-223 engine (`src/test`, registered through
       `META-INF/services/javax.script.ScriptEngineFactory`) instead of `"JavaScript"`; new tests for the missing engine and
-      the fallback. First green `verify` on JDK 21
+      the fallback. First green `verify` on JDK 21 — 2026-09-25: `ScriptExecutor.executeWithoutHistory` returns an error
+      result ("Script engine 'X' is not available. Available engines: […]", also for a `null` name; no result model, no
+      duration); `WicketConsolePanel` preselects the first sorted engine when "JavaScript" is missing. Test engine
+      `calc.CalcScriptEngine[Factory]` (name `Calc`: numbers, strings, variables, `+`/`*`, `print`, `fail`). Tests 3 → 6:
+      the 2 JS tests now use `Calc` (same scripts); new `testOutputErrorsAndState` (stdout, error + output of a failing
+      script, `$result`, variables across commands, `IScriptContext` bindings), `testMissingEngine`,
+      `testDefaultEngineWithoutJavaScript` (`assumeFalse` if a JS engine is present). Probes: with the old
+      `ScriptExecutor` 2 new tests fail with the NPE; with the old panel the fallback test fails. Library 6/0, demo 1/0
 - [ ] A3 Compiler: `maven-compiler-plugin` 3.5.1 → 3.16.0, `maven.compiler.release=21` replaces source/target 1.8
       (there is no `-parameters`; not added)
 - [ ] A4 Remove dead plugins: `maven-eclipse-plugin` (+ `wtp.version`), `cobertura-maven-plugin`, `coveralls-maven-plugin`.
@@ -243,10 +250,10 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
 
 ## Appendix C — Test inventory (2026-09-25)
 
-| Test class | `@Test` | `@Ignore` | Baseline JDK 21: run / errors | Notes |
-|---|---|---|---|---|
-| `TestWicketConsoleComponents` | 3 | 0 | 3 / **2** (NPE, no `"JavaScript"` engine) | `testSimpleExecution`, `testWicketConsoleComponent` evaluate JS |
-| demo `TestHomePage` | 1 | 0 | 1 / 0 | renders `HomePage` with the panel and the DebugBar |
+| Test class | `@Test` | `@Ignore` | Baseline JDK 21: run / errors | After A2 (JDK 21): run / failures | Notes |
+|---|---|---|---|---|---|
+| `TestWicketConsoleComponents` | 3 → 6 (A2) | 0 | 3 / **2** (NPE, no `"JavaScript"` engine) | 6 / 0 | scripts run on the test-only `Calc` engine (D4) |
+| demo `TestHomePage` | 1 | 0 | 1 / 0 | 1 / 0 | renders `HomePage` with the panel and the DebugBar |
 
 ## Appendix D — Stage B/C inventory (2026-09-25)
 

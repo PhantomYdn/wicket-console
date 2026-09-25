@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -83,7 +84,16 @@ public class ScriptExecutor
 	
 	public ScriptResult executeWithoutHistory(String command,String scriptEngineName,IScriptContext context)
 	{
-		return getScriptEngine(scriptEngineName).eval(command,context);
+		IScriptEngine engine = scriptEngineName!=null?getScriptEngine(scriptEngineName):null;
+		if(engine==null)
+		{
+			// E.g. "JavaScript" on JDK 15+ without GraalJS/Nashorn on the classpath: report it instead of failing with an NPE
+			ScriptResult result = new ScriptResult(scriptEngineName, command);
+			result.setError("Script engine '"+scriptEngineName+"' is not available. Available engines: "
+								+new TreeSet<String>(getSupportedEngines()));
+			return result;
+		}
+		return engine.eval(command,context);
 	}
 	
 	public IScriptEngine getScriptEngine(String engineName)
