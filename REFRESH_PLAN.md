@@ -120,7 +120,7 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       -Prelease`: "All plugins have a version specified"; only release, jetty (A9) and nexus-staging (the build extension
       keeps its version in the profile until R) remain outdated. Enforcer runs in every module (build-time only; consumers
       don't inherit this parent). 6/0 + 1/0 with surefire 3.6.0
-- [ ] A6 JUnit 4.12 → 4.13.2 (test scope; D12)
+- [x] A6 JUnit 4.12 → 4.13.2 (test scope; D12) — 2026-09-25: no test changes; 6/0 + 1/0
 - [ ] A7 Wicket 8.3.0 → 8.15.0 (core, extensions, devutils; D3); drop the redundant `${wicket.version}` on
       `wicket-extensions` in the module pom
 - [ ] A8 Library hygiene: servlet API and wicket-devutils `provided`; no logging binding or logging config in the jar
