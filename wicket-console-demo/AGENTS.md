@@ -4,16 +4,19 @@ Sample war: `WicketApplication` with a `HomePage` that embeds `WicketConsolePane
 (which gets the console contributor). Root rules: [`../AGENTS.md`](../AGENTS.md); plan: [`../REFRESH_PLAN.md`](../REFRESH_PLAN.md).
 
 - **Not published** and not used by Orienteer. It stays in the reactor while it builds (plan D9); parked only if it blocks a stage.
-- **Run:** `mvn install -DskipTests` once, then `mvn -pl wicket-console-demo jetty:run` (Jetty 9.4 plugin, :8080).
+- **Run:** `./mvnw package jetty:run -pl wicket-console-demo -am -DskipTests` (no install needed; the parent and the
+  library are skipped by the plugin) or `./mvnw -pl wicket-console-demo jetty:run` after `./mvnw install`.
+  Jetty 9.4.58 plugin on :8080 (`-Djetty.http.port=…` to change); works on JDK 21 and 25.
   `src/test/java/.../Start.java` is an alternative embedded-Jetty launcher (port 8081) using the `provided` `jetty-all` uber jar.
-- **Logging:** the only module with a logging binding (`slf4j-log4j12` + log4j 1.2.17, `src/main/resources/log4j.properties`).
+- **Logging:** the only module with a logging binding: `log4j-slf4j-impl` 2.26.1 (`log4j.version`) and
+  `src/main/resources/log4j2.xml`. Keep it here, never in the library.
 - **Tests:** 1 (`TestHomePage`, WicketTester renders `HomePage`).
 - A JavaScript engine is not on its classpath yet, so the console offers no engine on JDK 15+.
 
 ## Upgrade notes
 
-- The Jetty plugin config uses Jetty 7 connector classes (`SelectChannelConnector`, `SslSocketConnector`) that the 9.4
-  plugin ignores; `src/test/resources/keystore` is only referenced there.
+- `src/test/resources/keystore` (Wicket quickstart, password `wicket`) is unused since the Jetty 7 connector config was
+  removed in Stage A.
 - Stage B: `Start.java` uses `org.apache.wicket.util.time.Duration` (removed in Wicket 9).
 - Stage C: `web.xml` is Servlet 2.5 (`java.sun.com` namespace) → Jakarta EE 10; Jetty 9.4 plugin and `Start.java`
   (`jetty-all` no longer exists) → Jetty 12 ee10.

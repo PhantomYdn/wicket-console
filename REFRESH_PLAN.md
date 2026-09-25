@@ -137,8 +137,12 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       compile → fail, runtime → fail, test → pass; `js-scriptengine` compile → fail, `js` (pom) runtime → fail, test → pass.
       Demo war now ships log4j-api/core/slf4j-impl 2.26.1 instead of log4j 1.2.17 (same console pattern, root INFO;
       version in property `log4j.version`)
-- [ ] A9 Demo: Jetty 9.4.12 → 9.4.58 (`jetty-maven-plugin`, `provided` `jetty-all`); drop the Jetty 7 connector config the
+- [x] A9 Demo: Jetty 9.4.12 → 9.4.58 (`jetty-maven-plugin`, `provided` `jetty-all`); drop the Jetty 7 connector config the
       9.4 plugin ignores; `jetty:run` serves the home page on JDK 21 and 25 (ASM ≥ 9.8 for the plugin only if JDK 25 needs it)
+      — 2026-09-25: `./mvnw package jetty:run -pl wicket-console-demo -am -DskipTests -Djetty.http.port=18089` (no install):
+      on JDK 21.0.11 and 25.0.4 (Jetty banner `jvm …`) `GET /` → 302 → 200 with the panel and the DebugBar, and
+      `WicketConsolePage` → 200 ("Wicket Version: 8.15.0"). No ASM override needed: the war has no Java 25 class files
+      (re-checked in A10 with GraalJS). `Start.java` compiles against 9.4.58. The now-unused quickstart `keystore` is kept (X)
 - [ ] A10 GraalJS: `EmbeddedScriptEngine` uses engine-created bindings (D7) with a library regression test (the test
       engine keeps state only in its own bindings, like GraalJS); demo gets GraalJS 25.0.4 (runtime) and a JS smoke test
       (arithmetic, state across commands, output capture, error on a bad script)
