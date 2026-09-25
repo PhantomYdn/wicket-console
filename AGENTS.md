@@ -26,19 +26,22 @@ in lockstep with it. Dormant from Oct 2020 to Sep 2026. Repo: `PhantomYdn/wicket
 
 | Area | Current | Target (see plan) |
 |---|---|---|
-| Java | source/target 1.8 (compiler plugin 3.5.1) | `--release 21`, built/tested on JDK 21 **and** 25 |
-| Web | Wicket 8.3.0 (core, extensions; devutils `provided`), `javax.servlet-api` 3.1.0 `provided` | 8.15 (A) → 9.x (B) → 10.x + jakarta Servlet 6 (C) |
-| Scripts | `javax.script`; relied on the JDK's Nashorn (gone since JDK 15) | no JS engine in the library; Orienteer brings GraalJS |
-| Tests | JUnit 4.12 + `WicketTester` | JUnit 4.13.2 (A) → Jupiter + vintage (B) |
+| Java | `--release 21` (`maven.compiler.release`), built/tested on JDK 21 **and** 25 | stays 21 |
+| Web | Wicket 8.15.0 (core, extensions; devutils `provided`), `javax.servlet-api` 3.1.0 `provided` | 9.x (B) → 10.x + jakarta Servlet 6 (C) |
+| Scripts | `javax.script`, **no engine in the library** (plan D4); GraalJS gets Java access like Nashorn had (D13) | Orienteer brings GraalJS 25.0.4 |
+| Tests | JUnit 4.13.2 + `WicketTester`; test-only JSR-223 engine `Calc` | Jupiter + vintage (B) |
 | Other | openjson + SLF4J API (both via Wicket); no Lombok, Mockito, Guice | unchanged |
 
 ## Build status — read first
 
-- Baseline 2026-09-25 on JDK 21 (`mvn clean verify`): compiles (source/target 8 warnings), but 2 of the 3 library tests
-  fail with a `NullPointerException`: they evaluate `"JavaScript"`, and there is no JS engine on JDK 15+. Demo: 1 test, green.
-- Publishing still points at OSSRH (oss.sonatype.org, dead since 2025) with nexus-staging; phase R replaces it with the
-  Central Portal. **Only the owner deploys, pushes or tags** — agents prepare and validate locally.
-- JDK: Temurin 21.0.11 (default) and 25.0.4 via SDKMAN (`~/.sdkman/candidates/java/25.0.4-tem`). JDK 27 is non-LTS: don't target it.
+- **Stage A done locally (2026-09-25):** `./mvnw clean verify` green on Temurin 21 and 25 (library 7 tests, demo 4),
+  no `--add-opens` needed; `./mvnw install` → jar + parent pom `1.4-SNAPSHOT`, class files major 65. Public API unchanged.
+- **Versions (plan D8):** `master` = Stage A = `1.4-SNAPSHOT`; `1.4` is released after Orienteer P3 is green. Then
+  B = `1.5-SNAPSHOT`, C = `2.0-SNAPSHOT`. **Never build or install Stage B/C work as `1.4-SNAPSHOT`.**
+- Plugin versions live only in the root `<pluginManagement>`; enforcer requires Maven ≥ 3.9 and JDK ≥ 21, and bans
+  logging bindings and script engines from the library's compile/runtime scope (D10).
+- **Only the owner deploys, pushes or tags** — agents prepare and validate locally. OSSRH and jcenter/bintray are dead.
+- JDK: Temurin 21.0.11 (default, `.sdkmanrc`) and 25.0.4 via SDKMAN (`~/.sdkman/candidates/java/25.0.4-tem`). JDK 27 is non-LTS: don't target it.
 
 ## Commands
 
@@ -46,7 +49,7 @@ in lockstep with it. Dormant from Oct 2020 to Sep 2026. Repo: `PhantomYdn/wicket
 ./mvnw clean verify                                # build + tests (wrapper: Maven 3.9.16)
 ./mvnw install                                     # jar + parent pom into ~/.m2 for Orienteer
 ./mvnw -pl wicket-console test -Dtest=TestWicketConsoleComponents
-./mvnw install -DskipTests && ./mvnw -pl wicket-console-demo jetty:run   # demo on :8080
+./mvnw package jetty:run -pl wicket-console-demo -am -DskipTests         # demo on :8080 (GraalJS console), no install
 JAVA_HOME=~/.sdkman/candidates/java/25.0.4-tem ./mvnw clean verify     # JDK 25 check
 ```
 
@@ -71,14 +74,18 @@ JAVA_HOME=~/.sdkman/candidates/java/25.0.4-tem ./mvnw clean verify     # JDK 25 
 
 ## Testing
 
-- JUnit 4 + `WicketTester` (`TestWicketConsoleComponents`: execution, page render, panel submit/clear via Ajax).
-- Tests must pass with **no JS engine** on the classpath (the JDK has none since 15).
-- Demo: `TestHomePage` renders the home page with the panel and the DebugBar.
+- JUnit 4 + `WicketTester` (`TestWicketConsoleComponents`: execution, output/errors, state between commands,
+  missing engine, default-engine fallback, page render, panel submit/clear via Ajax).
+- Library tests must pass with **no JS engine** on the classpath: scripts use the test-only `calc.CalcScriptEngine`
+  (registered via `src/test/resources/META-INF/services/javax.script.ScriptEngineFactory`), which, like GraalJS,
+  keeps state only in bindings it created.
+- Demo: `TestHomePage` (home page with panel + DebugBar) and `TestJavaScriptConsole` (real GraalJS 25.0.4).
 
 ## Pitfalls
 
 - `ScriptExecutor` and `ScriptResultRendererManager` keep **static, JVM-wide** registries; tests share them.
-- `WicketConsolePanel` defaults to the `"JavaScript"` engine; without one, `ScriptExecutor.executeWithoutHistory`
-  dereferences a null engine (fixed in Stage A, plan A2).
+- A missing engine yields a `ScriptResult` with an error (plan D5), never an exception; the panel preselects the first
+  available engine when `"JavaScript"` is missing (D6). Keep both: JDK 15+ has no JS engine.
+- `EmbeddedScriptEngine` must keep using `engine.createBindings()` (D7) and set GraalJS options before the first eval (D13).
 - wicket-devutils is `provided` and optional: `Initializer` probes for `DebugBar` with `Class.forName`.
 - Coupled libraries move together: Wicket ↔ servlet API ↔ jakarta ↔ Jetty (demo). Never bump one alone.

@@ -24,15 +24,19 @@ The published artifact `ru.ydn.wicket.wicket-console:wicket-console` (jar only).
 
 ## Dependencies
 
-- Compile: wicket-core, wicket-extensions (not imported here; needed by wicket-devutils pages).
-- `provided`: javax.servlet-api, wicket-devutils. Test: JUnit 4.
+- Compile: wicket-core, wicket-extensions 8.15.0 (extensions isn't imported here; wicket-devutils pages need it).
+- `provided`: javax.servlet-api 3.1.0, wicket-devutils. Test: JUnit 4.13.2.
 - Used directly but only transitive (via wicket-core): `com.github.openjson` (`EmbeddedScriptEngine`), `slf4j-api`.
-- **No script engine and no logging binding** in compile/runtime scope — consumers bring them.
+- **No script engine and no logging binding** in compile/runtime scope — consumers bring them. Enforced by the
+  `enforce-library-hygiene` execution (`bannedDependencies`) in this pom; test scope is allowed.
 
 ## Tests
 
-- `TestWicketConsoleComponents` — 3 tests; `WicketTester` with a default `MockApplication`, so the
+- `TestWicketConsoleComponents` — 7 tests; `WicketTester` with a default `MockApplication`, so the
   `IInitializer` from `META-INF/services` installs `ScriptExecutorHolder`.
+- Test-only engine `calc.CalcScriptEngine[Factory]` (name `Calc`): numbers, strings, variables, `+`, `*`, `print(…)`,
+  `fail(…)`. It mimics GraalJS: foreign engine-scope bindings are copied per eval, so only its own bindings keep state.
+- `testDefaultEngineWithoutJavaScript` is skipped (`assumeFalse`) if a JS engine is ever on the test classpath.
 
 ## Pitfalls
 

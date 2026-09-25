@@ -15,7 +15,7 @@ Started: 2026-09-25. Versions below were checked on Maven Central on that date �
 | Phase | Goal | Depends on | Unblocks Orienteer | Status |
 |---|---|---|---|---|
 | P0 | AI initialization: AGENTS.md files + this plan | — | — | done |
-| A | Stage A: JDK 21/25 build on the **same** framework majors (Wicket 8.15, javax), works without a JS engine, `./mvnw install` | P0 | P3 | in progress |
+| A | Stage A: JDK 21/25 build on the **same** framework majors (Wicket 8.15, javax), works without a JS engine, `./mvnw install` | P0 | P3 | done (local install 2026-09-25; published artifact → R) |
 | B | Stage B: Wicket 9.x, still javax; JUnit 5 for the tests → `1.5` | A, `1.4` release (D8) | P5 | todo — not started |
 | C | Stage C: Wicket 10.x, `jakarta.servlet` 6, `wicket-tester` → `2.0` | B (D8) | P6 | todo |
 | R | Release & CI: GitHub Actions, Maven Central via the Central Portal: `1.4-SNAPSHOT` now, `1.4` after Orienteer P3 is green (D8/D11) | A | P3 "resolvable from a real repo" | todo |
@@ -168,11 +168,20 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       engine keeps working without Java access. Other engines are untouched. New demo test `testGraalJsJavaAccessLikeNashorn`
       (method calls on a bound `ArrayList`, `Java.type('java.lang.Math')`, `java.lang.Integer`, `new (Java.type(…))`):
       fails before the change (`Unknown identifier: add`), passes after. Library 7/0, demo 4/0
-- [ ] A11 `./mvnw clean verify` green on 21 **and** 25; `./mvnw install`; confirm the jar and the parent pom in
+- [x] A11 `./mvnw clean verify` green on 21 **and** 25; `./mvnw install`; confirm the jar and the parent pom in
       `~/.m2/repository/ru/ydn/wicket/wicket-console/`, class files major 65; `--add-opens` only where a test proves it
-- [ ] A11 Update `AGENTS.md` files (build status, stack) and write "Handoff to Orienteer" below
-- [ ] Exit check: `./mvnw clean verify` green on JDK 21 and 25; `./mvnw install` done; test results match Appendix C
-      (differences explained)
+      — 2026-09-25: JDK 21.0.11 and 25.0.4 both library 7/0, demo 4/0. **No `--add-opens` needed**; no illegal-access
+      warnings. JDK 25 only prints Truffle's (GraalJS, demo) `System::load` and `sun.misc.Unsafe::objectFieldOffset`
+      warnings, both harmless (see handoff). `./mvnw clean install` on JDK 21: parent pom + library pom + jar (29 classes,
+      all major 65, `Build-Jdk-Spec: 21`, SHA-1 identical to `target/`), demo war (never published). Public/protected API
+      diffed with `javap -protected` against the 2020 sources (`1efb676`) compiled on Wicket 8.15: **identical** (165 lines).
+      A throwaway consumer pom mirroring every orienteer-devutils usage (engines, factory, renderer, panel with
+      `IScriptContext`, `DEBUG_BAR_CONTRIB`, `setWicketConsolePageImplementation`, `executeWithoutHistory`) compiles
+      against the installed `1.4-SNAPSHOT`; its runtime classpath has no script engine and no logging binding
+- [x] A11 Update `AGENTS.md` files (build status, stack) and write "Handoff to Orienteer" below — 2026-09-25
+- [x] Exit check: `./mvnw clean verify` green on JDK 21 and 25; `./mvnw install` done; test results match Appendix C
+      (differences explained) — 2026-09-25: library 3 → 7 tests (2 fixed by using `Calc`, 4 added: A2 ×3, A10 ×1),
+      demo 1 → 4 (`TestJavaScriptConsole` ×3); 0 skipped, 0 failures on both JDKs. **Stage A done (local)**
 
 ## B — Stage B: Wicket 8 → 9, still javax (→ Orienteer P5)
 
@@ -296,11 +305,14 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
 
 ## Appendix C — Test inventory (2026-09-25)
 
-| Test class | `@Test` | `@Ignore` | Baseline JDK 21: run / errors | After A2 (JDK 21): run / failures | Notes |
+| Test class | `@Test` | `@Ignore` | Baseline JDK 21: run / errors | Stage A exit, JDK 21 and 25: run / failures | Notes |
 |---|---|---|---|---|---|
-| `TestWicketConsoleComponents` | 3 → 6 (A2) → 7 (A10) | 0 | 3 / **2** (NPE, no `"JavaScript"` engine) | 6 / 0 | scripts run on the test-only `Calc` engine (D4) |
+| `TestWicketConsoleComponents` | 3 → 6 (A2) → 7 (A10) | 0 | 3 / **2** (NPE, no `"JavaScript"` engine) | 7 / 0 | scripts run on the test-only `Calc` engine (D4) |
 | demo `TestHomePage` | 1 | 0 | 1 / 0 | 1 / 0 | renders `HomePage` with the panel and the DebugBar |
-| demo `TestJavaScriptConsole` (A10) | 2 → 3 (D13) | 0 | — | — | GraalJS 25.0.4 through `ScriptExecutor` and the panel; Java access |
+| demo `TestJavaScriptConsole` (A10) | 2 → 3 (D13) | 0 | — | 3 / 0 | GraalJS 25.0.4 through `ScriptExecutor` and the panel; Java access |
+
+Stage A exit (surefire 3.6.0): **library 7 run, demo 4 run, 0 failures, 0 errors, 0 skipped** on Temurin 21.0.11 and 25.0.4.
+`testDefaultEngineWithoutJavaScript` would be skipped only if a JS engine reached the library's test classpath.
 
 ## Appendix D — Stage B/C inventory (2026-09-25)
 
@@ -324,3 +336,99 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
 unzip -l wicket-console/target/wicket-console-1.4-SNAPSHOT.jar              # what the jar ships
 javap -v -cp wicket-console/target/classes ru.ydn.wicket.wicketconsole.ScriptExecutor | grep major
 ```
+
+## Handoff to Orienteer
+
+Stage A, 2026-09-25. **Local only so far:** installed in `~/.m2` on this machine, not pushed, not published. Publishing is
+phase R (owner). Until then Orienteer resolves `1.4-SNAPSHOT` only from a local `./mvnw install` of this repo.
+
+### 1. Installed artifacts (`~/.m2/repository/ru/ydn/wicket/wicket-console/`)
+
+| Coordinates | File |
+|---|---|
+| `ru.ydn.wicket.wicket-console:wicket-console-parent:1.4-SNAPSHOT:pom` | `wicket-console-parent/1.4-SNAPSHOT/wicket-console-parent-1.4-SNAPSHOT.pom` |
+| `ru.ydn.wicket.wicket-console:wicket-console:1.4-SNAPSHOT:jar` | `wicket-console/1.4-SNAPSHOT/wicket-console-1.4-SNAPSHOT.jar` (29 classes, ~38 KB) |
+| (demo, not for Orienteer) `wicket-console-demo:1.4-SNAPSHOT:war` | `wicket-console-demo/1.4-SNAPSHOT/` |
+
+- There is no test-jar (there never was one; Orienteer doesn't use one).
+- **Bytecode:** `--release 21`, every class file is major version **65**; the manifest says `Build-Jdk-Spec: 21`.
+- **Built and tested with:** Temurin 21.0.11 and Temurin 25.0.4, Maven 3.9.16 through `./mvnw`.
+
+### 2. Versions compiled against
+
+| Library | Version | Scope in the library pom |
+|---|---|---|
+| Apache Wicket (core, extensions) | **8.15.0** (was 8.3.0) | compile |
+| wicket-devutils | 8.15.0 | **provided** (optional at runtime: `Initializer` probes for `DebugBar`) |
+| Servlet API | `javax.servlet:javax.servlet-api` 3.1.0 (no Java file uses it) | **provided** |
+| openjson, SLF4J API | 1.0.11, 1.7.25 — transitive from wicket-core 8.15.0; **no binding** | — |
+| Script engine | **none** (D4); tested with the test-only `Calc` engine and, in the demo, GraalJS 25.0.4 | — |
+| JUnit | 4.13.2 | test |
+
+### 3. JVM flags Orienteer must mirror
+
+- **Required: none.** All tests pass on JDK 21 and 25 without `--add-opens`/`--add-exports`; the library uses no JDK
+  internals and no reflection into them.
+- **Optional (GraalJS noise, not caused by this library, same as wicket-orientdb's handoff):**
+  `-Dpolyglot.engine.WarnInterpreterOnly=false` (Truffle "fallback runtime" warning, JDK 21 and 25);
+  `--enable-native-access=ALL-UNNAMED` (JDK 25 `System::load` warning from `truffle-api`);
+  `--sun-misc-unsafe-memory-access=allow` (JDK 25 `Unsafe::objectFieldOffset` warning; **JDK 23+ only**, JDK 21 refuses to start with it).
+
+### 4. Behavior changes Orienteer will see (no signature changes)
+
+1. **Missing engine → error result (D5).** `ScriptExecutor.execute(...)`/`executeWithoutHistory(...)` with an unknown
+   engine name (or `null`) return a `ScriptResult` whose `error` is "Script engine 'X' is not available. Available
+   engines: […]" instead of throwing a `NullPointerException`. `execute(command)` (default `"JavaScript"`) is now safe.
+2. **Default engine fallback (D6).** `WicketConsolePanel` preselects `"JavaScript"` if present (it is, via GraalJS),
+   otherwise the first engine in sorted order.
+3. **Engine state between commands (D7).** `EmbeddedScriptEngine` uses `engine.createBindings()`. With GraalJS, variables
+   and functions defined in one console command were lost in the next (a new JS context per eval, also a leak); now
+   they persist per session and engine, as with Nashorn. Orienteer's own `ODBScriptEngine`/`ODBConsoleEngine` implement
+   `IScriptEngine` directly and are not affected.
+4. **Java access from GraalJS (D13).** For GraalJS only, the console enables host access and host class lookup on the
+   engine it creates, so public methods of the widget's `db`/`orient`/`util` bindings are callable and `Java.type(...)`/
+   `java.*` work, as with Nashorn. No global flag, nothing to configure in Orienteer. IO, threads and native access
+   stay off. The console remains full server-side code execution (it always was): keep it behind admin permissions.
+
+### 5. Actions for Orienteer (P1/P3)
+
+1. Resolve `wicket-console:1.4-SNAPSHOT` (local install now; Central Portal snapshots after phase R). Coordinates and
+   version are unchanged, so `orienteer-devutils/pom.xml` needs no edit.
+2. JavaScript in the devutils console needs a JSR-223 JS engine on Orienteer's runtime classpath: GraalJS 25.0.4 via
+   wicket-orientdb (Orienteer D8) is enough (`js-scriptengine` registers `js`, `JavaScript`, `ECMAScript`, `Graal.js`…).
+   The P3 item "Nashorn replacement … verify devutils consoles" can use `TestJavaScriptConsole` in the demo as a model.
+3. The selector lists GraalJS under ~14 names (it always listed every name of every engine); cosmetic, tracked in X.
+
+### 6. Public API changes
+
+- **None.** `javap -protected` of all 29 classes is identical to the 2020 code (`1efb676`) compiled against Wicket 8.15.
+  Changed implementations only: `ScriptExecutor.executeWithoutHistory`, `WicketConsolePanel` constructor,
+  `EmbeddedScriptEngine` constructor (+ 2 private helpers).
+
+### 7. Transitive dependency changes (library runtime classpath, baseline → Stage A)
+
+| Change | Artifacts | Cause |
+|---|---|---|
+| upgraded | wicket-core/-request/-util/-extensions 8.3.0 → 8.15.0; openjson 1.0.8 → 1.0.11; commons-fileupload 1.4 → 1.5; commons-io 2.5 → 2.6; commons-collections4 4.2 → 4.4; danekja 1.8.3 → 1.8.6 | Wicket 8.15 (all identical to what Orienteer already gets from its own Wicket 8.15) |
+| unchanged | slf4j-api 1.7.25 | — |
+| added / removed | none | — |
+
+### 8. Test results
+
+| JDK | wicket-console | demo |
+|---|---|---|
+| Temurin 21.0.11 | 7 run, 0 failures, 0 errors, 0 skipped | 4 run, 0 failures |
+| Temurin 25.0.4 | 7 run, 0 failures, 0 errors, 0 skipped | 4 run, 0 failures |
+
+Baseline was 3 run / 2 errors (NPE without Nashorn) + demo 1. Nothing is `@Ignore`d or skipped. The demo's `jetty:run`
+serves the home page and `WicketConsolePage` on both JDKs (Jetty 9.4.58), with GraalJS preselected.
+
+### 9. Work for Stages B and C (plan sections B and C)
+
+- **Stage B** (Wicket 9.24, javax, `1.5-SNAPSHOT`). Estimate: **S, ≈ 0.5 day.** Wicket 9 bump; Jupiter + vintage for
+  `WicketTester` assertions; CSP for `WicketConsolePage.html` (inline `<style>`, `javascript:` link); compile check of the
+  devutils API; demo `Start.java` `util.time.Duration`. No servlet, page-store, `ModalWindow` or `WicketTesterScope` work.
+- **Stage C** (Wicket 10, jakarta Servlet 6, `2.0-SNAPSHOT`). Estimate: **S, 0.5–1 day, mostly the demo.** Library: pom-only
+  (`jakarta.servlet-api` 6.0 `provided`, `wicket-tester` for tests) — no Java file imports `javax.servlet`, no Guice or
+  `javax.inject`. Demo (if kept): Jetty 12 ee10 plugin, Jakarta EE 10 `web.xml`, `Start.java`, `log4j-slf4j2-impl`.
+- Orienteer must still move to the new versions for B/C: they are Wicket-major rebuilds even with tiny code diffs.
