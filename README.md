@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/PhantomYdn/wicket-console.svg?branch=master)](https://travis-ci.org/PhantomYdn/wicket-console) [![Coverage Status](https://img.shields.io/coveralls/PhantomYdn/wicket-console.svg)](https://coveralls.io/r/PhantomYdn/wicket-console) [![Dependency Status](https://www.versioneye.com/user/projects/572bd903a0ca35005084085a/badge.svg?style=flat)](https://www.versioneye.com/user/projects/572bd903a0ca35005084085a)
+[![CI](https://github.com/PhantomYdn/wicket-console/actions/workflows/ci.yml/badge.svg)](https://github.com/PhantomYdn/wicket-console/actions/workflows/ci.yml)
 
 wicket-console
 ==============

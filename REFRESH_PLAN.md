@@ -222,8 +222,12 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
 
 ## R — Release & CI
 
-- [ ] R1 GitHub Actions workflow: push + PR, matrix JDK 21/25 (`actions/setup-java`, `distribution: temurin`, `cache: maven`),
+- [x] R1 GitHub Actions workflow: push + PR, matrix JDK 21/25 (`actions/setup-java`, `distribution: temurin`, `cache: maven`),
       `./mvnw -B verify`, upload surefire reports, `concurrency`; remove `.travis.yml` and the dead Travis/Coveralls/VersionEye badges
+      — 2026-09-25: `.github/workflows/ci.yml` (push to any branch, PR, manual; `actions/checkout@v7`, `setup-java@v6`,
+      `upload-artifact@v7` — latest majors; `contents: read`; `-ntp`), same shape as wicket-orientdb's. Validated against the
+      GitHub workflow JSON schema (schemastore); the first real run happens when the owner pushes. No publishing in CI
+      (D11). README shows the CI badge instead of the three dead ones. `mvnw` is committed executable (mode 100755)
 - [ ] R2 Replace OSSRH `distributionManagement` and `nexus-staging-maven-plugin` with
       `org.sonatype.central:central-publishing-maven-plugin` 0.11.0 (`publishingServerId=${central.server.id}`, default
       `central`; snapshots to `https://central.sonatype.com/repository/maven-snapshots/`); exclude the demo
