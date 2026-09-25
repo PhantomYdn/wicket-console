@@ -104,8 +104,9 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       script, `$result`, variables across commands, `IScriptContext` bindings), `testMissingEngine`,
       `testDefaultEngineWithoutJavaScript` (`assumeFalse` if a JS engine is present). Probes: with the old
       `ScriptExecutor` 2 new tests fail with the NPE; with the old panel the fallback test fails. Library 6/0, demo 1/0
-- [ ] A3 Compiler: `maven-compiler-plugin` 3.5.1 → 3.16.0, `maven.compiler.release=21` replaces source/target 1.8
-      (there is no `-parameters`; not added)
+- [x] A3 Compiler: `maven-compiler-plugin` 3.5.1 → 3.16.0, `maven.compiler.release=21` replaces source/target 1.8
+      (there is no `-parameters`; not added) — 2026-09-25: no source changes needed, 0 compiler warnings, class files
+      major 65 (main and test); 6/0 + 1/0. The plugin moves into `pluginManagement` in A5
 - [ ] A4 Remove dead plugins: `maven-eclipse-plugin` (+ `wtp.version`), `cobertura-maven-plugin`, `coveralls-maven-plugin`.
       There are no `<repositories>` (nothing dead to remove); OSSRH `distributionManagement`/nexus-staging stay until R (D11)
 - [ ] A5 Pin every build plugin once in root `<pluginManagement>` (Appendix B; wicket-orientdb's versions); release-profile
