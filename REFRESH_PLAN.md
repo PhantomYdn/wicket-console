@@ -240,10 +240,19 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
       sources/javadoc/gpg. Buildplan: `deploy` → `central-publishing:publish` (`injected-central-publishing`) in all 3
       modules, no `maven-deploy-plugin`. Nothing was uploaded. Note: the effective POM still lists
       `oss.sonatype.org` — from the active `archetype` profile in the owner's `~/.m2/settings.xml`, not from this repo
-- [ ] R3 Release profile: sources + javadoc jars (doclint `all,-missing`, fix errors), `maven-gpg-plugin` 3.2.8; required POM
+- [x] R3 Release profile: sources + javadoc jars (doclint `all,-missing`, fix errors), `maven-gpg-plugin` 3.2.8; required POM
       metadata (name, description, url, licenses, developers, scm) valid in every published POM (the module `url` is
       `http://maven.apache.org`, the description says "JDK6+"); maven-release-plugin 2.5.3 → 3.3.1, tag `v@{project.version}`,
-      local-only prepare (`pushChanges=false`, `localCheckout=true`)
+      local-only prepare (`pushChanges=false`, `localCheckout=true`) — 2026-09-25: profile `release` = `source:jar-no-fork` +
+      `javadoc:jar` + `gpg:sign` (3.4.0 / 3.12.0 / 3.2.8; the library has no test-jar, so no test-sources). Javadoc with
+      `doclint=all,-missing`: **0 errors, 0 warnings**, no source changes needed (the code has almost no Javadoc).
+      `-Prelease -Dgpg.skip verify`: library jar + `-sources` (40 entries incl. markup/CSS) + `-javadoc`; the demo skips
+      sources/javadoc/gpg. Without `-Dgpg.skip` and without a key, `gpg:sign` fails ("No secret key") as expected.
+      POM metadata (effective POMs of parent and library): name, description (new, accurate), url, license (now https),
+      developer, scm all present; module `url`/`scm` no longer get `/<artifactId>` appended
+      (`child.*.inherit.append.path=false`), the bogus module `url` `http://maven.apache.org` is gone, scm `connection`
+      fixed to `scm:git:https://…`. Release plugin 3.3.1; deprecated `useReleaseProfile` dropped; default next version
+      after `1.4` is `1.5-SNAPSHOT` (matches D8)
 - [ ] R4 `.github/dependabot.yml` (maven + github-actions, weekly, grouped); ignore majors of Wicket/servlet/Jetty until their stages
 - [ ] R5 JaCoCo report (replaces cobertura/coveralls), no thresholds
 - [ ] R6 Local validation without any upload: `-Prelease -Dgpg.skip` builds the release artifacts; list what a Central

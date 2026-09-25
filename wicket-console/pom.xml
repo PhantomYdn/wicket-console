@@ -9,7 +9,7 @@
   <groupId>ru.ydn.wicket.wicket-console</groupId>
   <artifactId>wicket-console</artifactId>
   <name>wicket-console</name>
-  <url>http://maven.apache.org</url>
+  <description>Ajax script console component for Apache Wicket: pluggable script engines (JSR-223 or custom), per-session history, Wicket DebugBar panel</description>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
