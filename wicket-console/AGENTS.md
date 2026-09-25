@@ -10,8 +10,10 @@ The published artifact `ru.ydn.wicket.wicket-console:wicket-console` (jar only).
 - `ScriptExecutor` — static list of factories (the built-in one wraps `javax.script.ScriptEngineManager`;
   `registerScriptEngineFactory` pushes to the front, so registered factories win), per-instance engine cache and history.
 - `ScriptExecutorHolder` — application `MetaDataKey`; one `ScriptExecutor` per session id; drops it on session unbind.
-- `EmbeddedScriptEngine` — JSR-223 adapter: one `ScriptContext` per engine instance (so state survives between
-  commands), captures stdout/stderr, stores the last result as `$result`, tries `Java.asJSONCompatible` (Nashorn-only).
+- `EmbeddedScriptEngine` — JSR-223 adapter: one `ScriptContext` per engine instance with **engine-created bindings**
+  (GraalJS keeps state only in its own bindings, plan D7), captures stdout/stderr, stores the last result as `$result`,
+  tries `Java.asJSONCompatible` (Nashorn-only). For GraalJS (factory name `Graal.js`) it enables Java access through
+  the `polyglot.js.allowHostAccess`/`allowHostClassLookup` bindings options, as Nashorn had it (plan D13).
 - `ScriptResult` (script, engine, out, error, result model, start/finish/duration), `StorageModel` (keeps
   non-serializable results in a transient field).
 - UI: `WicketConsolePanel` (form, engine selector, keep-script, history), `HistoryItemPanel` (+ "reuse" link),

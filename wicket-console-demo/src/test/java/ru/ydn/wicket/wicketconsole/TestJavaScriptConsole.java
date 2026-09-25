@@ -4,7 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -78,6 +81,37 @@ public class TestJavaScriptConsole
 		assertNoError(result);
 		assertEquals(42, ((Number)result.getResult()).intValue());
 		assertEquals(7, se.getHistory().size());
+	}
+
+	@Test
+	public void testGraalJsJavaAccessLikeNashorn()
+	{
+		// REFRESH_PLAN.md D13: GraalJS denies host access by default; the console enables it (as Nashorn had it), so
+		// methods of bound Java objects (Orienteer's db/orient/util) and Java classes are usable from scripts
+		ScriptExecutor se = ScriptExecutorHolder.get().getScriptExecutor();
+		final List<String> list = new ArrayList<String>(Arrays.asList("a", "b"));
+		IScriptContext context = new IScriptContext() {
+			@Override
+			public Map<String, Object> getBindings() {
+				return Collections.<String, Object>singletonMap("list", list);
+			}
+		};
+		ScriptResult result = se.execute("list.add('c'); list.size() + list.get(1)", JS, context);
+		assertNoError(result);
+		assertEquals("3b", result.getResult());
+		assertEquals(3, list.size());
+
+		result = se.execute("Java.type('java.lang.Math').max(3, 7)", JS, null);
+		assertNoError(result);
+		assertEquals(7, ((Number)result.getResult()).intValue());
+
+		result = se.execute("java.lang.Integer.toHexString(255)", JS, null);
+		assertNoError(result);
+		assertEquals("ff", result.getResult());
+
+		result = se.execute("new (Java.type('java.lang.StringBuilder'))('ab').reverse().toString()", JS, null);
+		assertNoError(result);
+		assertEquals("ba", result.getResult());
 	}
 
 	@SuppressWarnings("unchecked")

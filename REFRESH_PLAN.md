@@ -47,6 +47,7 @@ Started: 2026-09-25. Versions below were checked on Maven Central on that date �
 | D10 | 2026-09-25 | The library module enforces its hygiene: `maven-enforcer-plugin` `bannedDependencies` fails the build if a logging binding or a script engine enters its compile or runtime scope (test scope is allowed). | accepted (owner, 2026-09-25), if the rule works cleanly |
 | D11 | 2026-09-25 | **Publishing:** `ru.ydn` is verified on the Central Portal with SNAPSHOTs enabled (wicket-orientdb publishes there). Releases and snapshots go through `central-publishing-maven-plugin` (server id property `central.server.id`, default `central`). Publishing config (OSSRH `distributionManagement`, nexus-staging, release plugin) stays untouched in Stage A and is replaced in phase R. Every upload is run by the owner; agents only prepare and validate locally. | accepted |
 | D12 | 2026-09-25 | Tests stay on JUnit 4.13.2 in Stage A; Mockito is not added (unused). Jupiter + vintage come in Stage B because Wicket 9 testers use JUnit 5 assertions. | accepted |
+| D13 | 2026-09-25 | **Java access for GraalJS (Nashorn parity).** GraalJS's `ScriptEngine` denies host access by default: scripts can't call methods of bound Java objects (Orienteer's `db`/`orient`/`util` bindings) and `Java.type`/`java.*` are undefined; Nashorn allowed both. `EmbeddedScriptEngine` enables `polyglot.js.allowHostAccess` and `polyglot.js.allowHostClassLookup` (any class) on the bindings it creates — only when the engine's factory is GraalJS (`getEngineName()` = `Graal.js`, no GraalJS dependency), only for the console's own engine instances. No global JVM flag; IO, thread creation and native access stay off; no Nashorn syntax mode. Alternatives rejected: a JVM-wide `-Dpolyglot.js.nashorn-compat=true` for Orienteer to mirror (affects every GraalJS engine in the JVM), or an opt-in switch (one more thing to configure for the same result). | accepted (owner, 2026-09-25) |
 
 ### Open questions (decide when the phase starts; record the answer above)
 
@@ -161,6 +162,12 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       `META-INF/versions/21`), so Jetty's ASM 9.7.1 needs no override. **Found:** GraalJS's `ScriptEngine` denies host
       access by default, so calling methods on bound Java objects (Orienteer's `db`/`orient`/`util`) and `Java.type`/`java.*`
       fail — Nashorn allowed them. Handled separately in the next item (D13)
+- [x] A10 GraalJS Java access like Nashorn (D13): `EmbeddedScriptEngine` puts `polyglot.js.allowHostAccess=true` and
+      `polyglot.js.allowHostClassLookup` (any class) into the GraalJS bindings it creates, before the first eval —
+      2026-09-25: detection by factory engine name `Graal.js`; if GraalJS rejects the options, a WARN is logged and the
+      engine keeps working without Java access. Other engines are untouched. New demo test `testGraalJsJavaAccessLikeNashorn`
+      (method calls on a bound `ArrayList`, `Java.type('java.lang.Math')`, `java.lang.Integer`, `new (Java.type(…))`):
+      fails before the change (`Unknown identifier: add`), passes after. Library 7/0, demo 4/0
 - [ ] A11 `./mvnw clean verify` green on 21 **and** 25; `./mvnw install`; confirm the jar and the parent pom in
       `~/.m2/repository/ru/ydn/wicket/wicket-console/`, class files major 65; `--add-opens` only where a test proves it
 - [ ] A11 Update `AGENTS.md` files (build status, stack) and write "Handoff to Orienteer" below
@@ -246,7 +253,8 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
 ### Security
 - [ ] The console runs arbitrary code on the server with the JVM's privileges. `WicketConsolePanel` has no authorization
       of its own (embedding apps must restrict it; Orienteer does via widget/page permissions); `WicketConsolePage` is only
-      guarded by `DevUtilsPage` (development utilities enabled). Document this in the README
+      guarded by `DevUtilsPage` (development utilities enabled). Document this in the README. With GraalJS the console
+      deliberately has full Java access (D13), exactly as with Nashorn: it is no sandbox
 - [ ] Demo: `HomePage.html` loads Google Fonts over plain HTTP; quickstart `keystore` (password `wicket`) — demo only
 
 ---
@@ -292,7 +300,7 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
 |---|---|---|---|---|---|
 | `TestWicketConsoleComponents` | 3 → 6 (A2) → 7 (A10) | 0 | 3 / **2** (NPE, no `"JavaScript"` engine) | 6 / 0 | scripts run on the test-only `Calc` engine (D4) |
 | demo `TestHomePage` | 1 | 0 | 1 / 0 | 1 / 0 | renders `HomePage` with the panel and the DebugBar |
-| demo `TestJavaScriptConsole` (A10) | 2 | 0 | — | — | GraalJS 25.0.4 through `ScriptExecutor` and the panel |
+| demo `TestJavaScriptConsole` (A10) | 2 → 3 (D13) | 0 | — | — | GraalJS 25.0.4 through `ScriptExecutor` and the panel; Java access |
 
 ## Appendix D — Stage B/C inventory (2026-09-25)
 
