@@ -43,10 +43,11 @@ in lockstep with it. Dormant from Oct 2020 to Sep 2026. Repo: `PhantomYdn/wicket
 ## Commands
 
 ```bash
-mvn clean verify                                   # build + tests (becomes ./mvnw in Stage A)
-mvn install                                        # jar + parent pom into ~/.m2 for Orienteer
-mvn -pl wicket-console test -Dtest=TestWicketConsoleComponents
-mvn install -DskipTests && mvn -pl wicket-console-demo jetty:run   # demo on :8080
+./mvnw clean verify                                # build + tests (wrapper: Maven 3.9.16)
+./mvnw install                                     # jar + parent pom into ~/.m2 for Orienteer
+./mvnw -pl wicket-console test -Dtest=TestWicketConsoleComponents
+./mvnw install -DskipTests && ./mvnw -pl wicket-console-demo jetty:run   # demo on :8080
+JAVA_HOME=~/.sdkman/candidates/java/25.0.4-tem ./mvnw clean verify     # JDK 25 check
 ```
 
 ## Layout and key classes

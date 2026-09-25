@@ -88,9 +88,11 @@ and in `TestModule` `ScriptExecutorHolder.get().getScriptExecutor().executeWitho
 Goal: `./mvnw clean verify` green on JDK 21 and 25 with `--release 21`, Wicket 8.15, javax, **no JS engine** in the
 library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-SNAPSHOT` into `~/.m2`.
 
-- [ ] A1 Maven Wrapper 3.9.16 (`mvn wrapper:wrapper -Dmaven=3.9.16 -Dtype=only-script`): commit `mvnw`, `mvnw.cmd`,
+- [x] A1 Maven Wrapper 3.9.16 (`mvn wrapper:wrapper -Dmaven=3.9.16 -Dtype=only-script`): commit `mvnw`, `mvnw.cmd`,
       `.mvn/wrapper/maven-wrapper.properties`; `.sdkmanrc` (`java=21.0.11-tem`); minimal `.editorconfig` (UTF-8, LF,
       tabs for Java/HTML/CSS, nothing for the mixed poms; no trailing-whitespace or final-newline rules; **no reformat**)
+      — 2026-09-25, wrapper plugin 3.3.4 (scripts identical to wicket-orientdb's). Measured: all 24 Java, 4 HTML and 2 CSS
+      files indent with tabs (3 Java + 1 HTML also have some space-indented lines); all 4 poms mix both; 8 files lack a final newline
 - [ ] A2 Script engines without Nashorn: missing engine → error `ScriptResult` (D5); `WicketConsolePanel` default-engine
       fallback (D6); library tests use a test-only JSR-223 engine (`src/test`, registered through
       `META-INF/services/javax.script.ScriptEngineFactory`) instead of `"JavaScript"`; new tests for the missing engine and
