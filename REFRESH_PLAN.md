@@ -228,9 +228,18 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
       `upload-artifact@v7` — latest majors; `contents: read`; `-ntp`), same shape as wicket-orientdb's. Validated against the
       GitHub workflow JSON schema (schemastore); the first real run happens when the owner pushes. No publishing in CI
       (D11). README shows the CI badge instead of the three dead ones. `mvnw` is committed executable (mode 100755)
-- [ ] R2 Replace OSSRH `distributionManagement` and `nexus-staging-maven-plugin` with
+- [x] R2 Replace OSSRH `distributionManagement` and `nexus-staging-maven-plugin` with
       `org.sonatype.central:central-publishing-maven-plugin` 0.11.0 (`publishingServerId=${central.server.id}`, default
-      `central`; snapshots to `https://central.sonatype.com/repository/maven-snapshots/`); exclude the demo
+      `central`; snapshots to `https://central.sonatype.com/repository/maven-snapshots/`); exclude the demo — 2026-09-25:
+      plugin as build extension in the root `<build><plugins>` (version in `pluginManagement`), properties
+      `central.server.id` (default `central`; the owner's token is under `ossrh` → `-Dcentral.server.id=ossrh`) and
+      `central.snapshots.url`, `deploymentName` = `wicket-console <version>`, `autoPublish` default false (manual Publish
+      in the portal). `distributionManagement` removed entirely (the plugin would otherwise fall back to it for
+      snapshots); nexus-staging removed from the `release` profile. `excludeArtifacts` = `wicket-console-demo` (per
+      wicket-orientdb's bytecode check of 0.11.0, applied on both the snapshot and the release path); the demo also skips
+      sources/javadoc/gpg. Buildplan: `deploy` → `central-publishing:publish` (`injected-central-publishing`) in all 3
+      modules, no `maven-deploy-plugin`. Nothing was uploaded. Note: the effective POM still lists
+      `oss.sonatype.org` — from the active `archetype` profile in the owner's `~/.m2/settings.xml`, not from this repo
 - [ ] R3 Release profile: sources + javadoc jars (doclint `all,-missing`, fix errors), `maven-gpg-plugin` 3.2.8; required POM
       metadata (name, description, url, licenses, developers, scm) valid in every published POM (the module `url` is
       `http://maven.apache.org`, the description says "JDK6+"); maven-release-plugin 2.5.3 → 3.3.1, tag `v@{project.version}`,

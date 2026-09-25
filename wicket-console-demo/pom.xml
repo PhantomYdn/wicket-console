@@ -27,6 +27,12 @@
 	<artifactId>wicket-console-demo</artifactId>
 	<packaging>war</packaging>
 	<name>WicketConsoleDemo</name>
+	<properties>
+		<!-- Never published (excluded from Central in the root pom): skip release-profile extras -->
+		<maven.source.skip>true</maven.source.skip>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+		<gpg.skip>true</gpg.skip>
+	</properties>
 	<dependencies>
 		<dependency>
 		      <groupId>ru.ydn.wicket.wicket-console</groupId>
