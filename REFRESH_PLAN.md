@@ -257,7 +257,10 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
       — 2026-09-25: groups for Maven plugins, GraalVM and all GitHub Actions; ignored until their stages: Wicket majors,
       `javax.servlet-api`, Jetty minor/major (demo), GraalVM minor/major (follows Orienteer's 25.0.x), JUnit 4 major,
       Log4j major, maven-site-plugin 4 (milestones only). Validated against the Dependabot JSON schema; active once pushed
-- [ ] R5 JaCoCo report (replaces cobertura/coveralls), no thresholds
+- [x] R5 JaCoCo report (replaces cobertura/coveralls), no thresholds — 2026-09-25: `jacoco-maven-plugin` 0.8.15,
+      `prepare-agent` + `report` at `verify`, instrumenting only `ru/ydn/**` (GraalJS untouched). Green on 21 and 25.
+      Baseline coverage of `wicket-console`: 84% instructions, 81% lines (25 classes; the 4 interfaces have no code).
+      CI uploads the report from the JDK 21 job
 - [ ] R6 Local validation without any upload: `-Prelease -Dgpg.skip` builds the release artifacts; list what a Central
       bundle would contain; publishing runbook below
 - [ ] Owner: first `1.4-SNAPSHOT` deploy (`./mvnw -B clean deploy -Prelease -Dgpg.skip -Dcentral.server.id=ossrh`)
