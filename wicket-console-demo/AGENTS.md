@@ -10,8 +10,10 @@ Sample war: `WicketApplication` with a `HomePage` that embeds `WicketConsolePane
   `src/test/java/.../Start.java` is an alternative embedded-Jetty launcher (port 8081) using the `provided` `jetty-all` uber jar.
 - **Logging:** the only module with a logging binding: `log4j-slf4j-impl` 2.26.1 (`log4j.version`) and
   `src/main/resources/log4j2.xml`. Keep it here, never in the library.
-- **Tests:** 1 (`TestHomePage`, WicketTester renders `HomePage`).
-- A JavaScript engine is not on its classpath yet, so the console offers no engine on JDK 15+.
+- **JavaScript:** GraalJS 25.0.4 (`js-scriptengine` + `js` pom, `runtime`, `graalvm.version`) — the demo only; the
+  library bans script engines (plan D4/D10). Same version as Orienteer. Truffle prints a "fallback runtime" warning on
+  a stock JDK (silence with `-Dpolyglot.engine.WarnInterpreterOnly=false`).
+- **Tests:** 3 — `TestHomePage` (renders `HomePage`), `TestJavaScriptConsole` (GraalJS via `ScriptExecutor` and the panel).
 
 ## Upgrade notes
 

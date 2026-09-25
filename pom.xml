@@ -49,6 +49,9 @@
 	<wicket.version>8.15.0</wicket.version>
 	<jetty.version>9.4.58.v20250814</jetty.version>
 	<log4j.version>2.26.1</log4j.version>
+	<!-- GraalJS for the demo's JavaScript console only (the library ships no script engine, REFRESH_PLAN.md D4);
+	     same version as Orienteer (its D8) -->
+	<graalvm.version>25.0.4</graalvm.version>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
   <modules>
@@ -71,6 +74,18 @@
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-devutils</artifactId>
 			<version>${wicket.version}</version>
+		</dependency>
+		<!-- JavaScript engine for the demo only: never add it to the library (enforced there, D10) -->
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-scriptengine</artifactId>
+			<version>${graalvm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js</artifactId>
+			<version>${graalvm.version}</version>
+			<type>pom</type>
 		</dependency>
 		<!-- Logging binding for the demo only: never add it to the library -->
 		<dependency>

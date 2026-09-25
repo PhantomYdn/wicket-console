@@ -150,8 +150,17 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       new `testEngineStateSurvivesBetweenCommands`. Before the fix it and `testOutputErrorsAndState` fail
       ("counter is not defined", `x` lost); after: 7/0 + 1/0. Nashorn (which stored its global inside any bindings) and
       the `$result`/`IScriptContext` bindings behave as before
-- [ ] A10 Demo gets GraalJS 25.0.4 (runtime) and a JS smoke test (arithmetic, state across commands, output capture,
-      error on a bad script, Java objects bound via `IScriptContext`, panel default engine)
+- [x] A10 Demo gets GraalJS 25.0.4 (runtime) and a JS smoke test (arithmetic, state across commands, output capture,
+      error on a bad script, Java objects bound via `IScriptContext`, panel default engine) — 2026-09-25: `js-scriptengine`
+      + `js` (pom) 25.0.4 `runtime` in the demo only (`graalvm.version`, managed in the root pom; the library's tree has
+      no `org.graalvm` artifact, and D10 would fail it). New `TestJavaScriptConsole` (2 tests): `ScriptExecutor` with
+      `"JavaScript"` (arithmetic, `var`/`function`/`$result` across commands, `print`/`console.log` captured, a
+      `ReferenceError` lands in `error`, `IScriptContext` values) and the panel on `HomePage` (default engine stays
+      `"JavaScript"`, Ajax submit, result rendered). Demo 3/0, library 7/0. `jetty:run` on JDK 25.0.4 with GraalJS in the
+      war: `GET /` 200, "JavaScript" preselected; the GraalJS jars have no Java 25 class files (`truffle-api` tops out at
+      `META-INF/versions/21`), so Jetty's ASM 9.7.1 needs no override. **Found:** GraalJS's `ScriptEngine` denies host
+      access by default, so calling methods on bound Java objects (Orienteer's `db`/`orient`/`util`) and `Java.type`/`java.*`
+      fail — Nashorn allowed them. Handled separately in the next item (D13)
 - [ ] A11 `./mvnw clean verify` green on 21 **and** 25; `./mvnw install`; confirm the jar and the parent pom in
       `~/.m2/repository/ru/ydn/wicket/wicket-console/`, class files major 65; `--add-opens` only where a test proves it
 - [ ] A11 Update `AGENTS.md` files (build status, stack) and write "Handoff to Orienteer" below
@@ -283,6 +292,7 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
 |---|---|---|---|---|---|
 | `TestWicketConsoleComponents` | 3 → 6 (A2) → 7 (A10) | 0 | 3 / **2** (NPE, no `"JavaScript"` engine) | 6 / 0 | scripts run on the test-only `Calc` engine (D4) |
 | demo `TestHomePage` | 1 | 0 | 1 / 0 | 1 / 0 | renders `HomePage` with the panel and the DebugBar |
+| demo `TestJavaScriptConsole` (A10) | 2 | 0 | — | — | GraalJS 25.0.4 through `ScriptExecutor` and the panel |
 
 ## Appendix D — Stage B/C inventory (2026-09-25)
 
