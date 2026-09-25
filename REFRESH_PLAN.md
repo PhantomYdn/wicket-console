@@ -121,8 +121,10 @@ library or its tests; `./mvnw install` puts the jar and the parent pom for `1.4-
       keeps its version in the profile until R) remain outdated. Enforcer runs in every module (build-time only; consumers
       don't inherit this parent). 6/0 + 1/0 with surefire 3.6.0
 - [x] A6 JUnit 4.12 → 4.13.2 (test scope; D12) — 2026-09-25: no test changes; 6/0 + 1/0
-- [ ] A7 Wicket 8.3.0 → 8.15.0 (core, extensions, devutils; D3); drop the redundant `${wicket.version}` on
-      `wicket-extensions` in the module pom
+- [x] A7 Wicket 8.3.0 → 8.15.0 (core, extensions, devutils; D3); drop the redundant `${wicket.version}` on
+      `wicket-extensions` in the module pom — 2026-09-25: no source changes; 6/0 + 1/0. Transitive: openjson 1.0.8 → 1.0.11,
+      commons-fileupload 1.4 → 1.5, commons-io 2.5 → 2.6, commons-collections4 4.2 → 4.4, danekja 1.8.3 → 1.8.6;
+      slf4j-api stays 1.7.25 (identical to what Orienteer already gets from Wicket 8.15)
 - [ ] A8 Library hygiene: servlet API and wicket-devutils `provided`; no logging binding or logging config in the jar
       (verify with `jar tf`); enforcer `bannedDependencies` for logging bindings and script engines in the library's
       compile/runtime scope (D10, verified with a probe); demo: log4j 1.2.17 + `slf4j-log4j12` (EOL, CVEs) →
