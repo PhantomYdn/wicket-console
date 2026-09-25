@@ -40,7 +40,11 @@ in lockstep with it. Dormant from Oct 2020 to Sep 2026. Repo: `PhantomYdn/wicket
   B = `1.5-SNAPSHOT`, C = `2.0-SNAPSHOT`. **Never build or install Stage B/C work as `1.4-SNAPSHOT`.**
 - Plugin versions live only in the root `<pluginManagement>`; enforcer requires Maven ≥ 3.9 and JDK ≥ 21, and bans
   logging bindings and script engines from the library's compile/runtime scope (D10).
-- **Only the owner deploys, pushes or tags** — agents prepare and validate locally. OSSRH and jcenter/bintray are dead.
+- CI: `.github/workflows/ci.yml` (push + PR, JDK 21/25, surefire + JaCoCo reports); Dependabot: `.github/dependabot.yml`.
+- Publishing: `central-publishing-maven-plugin` (server id `${central.server.id}`, default `central`; the owner's token is
+  under `ossrh`) — `-SNAPSHOT`s to the Central Portal snapshots repo, releases as a portal bundle; the demo is excluded.
+  Runbook: plan phase R. **Only the owner deploys, pushes or tags** — agents prepare and validate locally. OSSRH and
+  jcenter/bintray are dead. The parent pom is published: keep it free of `<repositories>`/`<distributionManagement>`.
 - JDK: Temurin 21.0.11 (default, `.sdkmanrc`) and 25.0.4 via SDKMAN (`~/.sdkman/candidates/java/25.0.4-tem`). JDK 27 is non-LTS: don't target it.
 
 ## Commands
@@ -51,6 +55,7 @@ in lockstep with it. Dormant from Oct 2020 to Sep 2026. Repo: `PhantomYdn/wicket
 ./mvnw -pl wicket-console test -Dtest=TestWicketConsoleComponents
 ./mvnw package jetty:run -pl wicket-console-demo -am -DskipTests         # demo on :8080 (GraalJS console), no install
 JAVA_HOME=~/.sdkman/candidates/java/25.0.4-tem ./mvnw clean verify     # JDK 25 check
+./mvnw -Prelease -Dgpg.skip clean verify           # release artifacts (sources, javadoc) locally; never `deploy` (owner only)
 ```
 
 ## Layout and key classes
