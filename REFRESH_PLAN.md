@@ -18,7 +18,7 @@ Started: 2026-09-25. Versions below were checked on Maven Central on that date �
 | A | Stage A: JDK 21/25 build on the **same** framework majors (Wicket 8.15, javax), works without a JS engine, `./mvnw install` | P0 | P3 | done (local install 2026-09-25; published artifact → R) |
 | B | Stage B: Wicket 9.x, still javax; JUnit 5 for the tests → `1.5` | A, `1.4` release (D8) | P5 | todo — not started |
 | C | Stage C: Wicket 10.x, `jakarta.servlet` 6, `wicket-tester` → `2.0` | B (D8) | P6 | todo |
-| R | Release & CI: GitHub Actions, Maven Central via the Central Portal: `1.4-SNAPSHOT` now, `1.4` after Orienteer P3 is green (D8/D11) | A | P3 "resolvable from a real repo" | prepared locally (2026-09-25); waiting for the owner: push, snapshot deploy |
+| R | Release & CI: GitHub Actions, Maven Central via the Central Portal: `1.4-SNAPSHOT` now, `1.4` after Orienteer P3 is green (D8/D11) | A | P3 "resolvable from a real repo" | `1.4-SNAPSHOT` **published** to the Central Portal snapshots repo (2026-09-28, build `1.4-20260928.231208-1`; deleted ~2026-12-27 unless redeployed); `1.4` release pending (Orienteer P3, GPG key) |
 | X | Cleanup, docs, known bugs & security | any time | — | todo |
 
 ## Guiding principles
@@ -273,15 +273,28 @@ Goal: no `javax.servlet` left; Wicket 10.x; `jakarta.servlet-api` 6.0 `provided`
       SNAPSHOT references; only the `.asc` signatures are missing (no GPG key). File list in the handoff §10. The plugin's
       upload paths are not exercised (they would upload). Finally `./mvnw clean install` on JDK 21 refreshed `~/.m2`
       (POMs = HEAD, jar unchanged: 29 classes, major 65)
-- [ ] Owner: first `1.4-SNAPSHOT` deploy (`./mvnw -B clean deploy -Prelease -Dgpg.skip -Dcentral.server.id=ossrh`) — runbook below
+- [x] Owner: first `1.4-SNAPSHOT` deploy (`./mvnw -B clean deploy -Prelease -Dgpg.skip -Dcentral.server.id=ossrh`) — runbook below
+      — 2026-09-28 ~23:12 UTC, run by the Orienteer session in this checkout from a clean `master` at `bd3a0cb` (level with
+      `origin/master`, i.e. pushed) on JDK 21.0.11: BUILD SUCCESS, tests 7/0 + demo 4/0. Uploaded build
+      **`1.4-20260928.231208-1`**: `wicket-console-parent` pom; `wicket-console` pom, jar, `-sources`, `-javadoc`
+      (unsigned, no `.asc`). `wicket-console-demo` not uploaded (404 on the snapshots repo). **Snapshots are deleted
+      after 90 days → around 2026-12-27:** redeploy (same command) or release `1.4` before then
 - [ ] Owner: release `1.4` once Orienteer P3 is green against `1.4-SNAPSHOT` (GPG key on a keyserver); then `master` → `1.5-SNAPSHOT` (D8)
 - [ ] Owner, recommended: `~/.m2/settings.xml` is world-readable (`644`) with plain-text tokens → `chmod 600 ~/.m2/settings.xml`
       and/or encrypt (`mvn --encrypt-master-password`, `mvn --encrypt-password`); optionally copy the Portal token to a
       server `central` to drop `-Dcentral.server.id=ossrh`. Its active `archetype` profile still adds the dead
       `oss.sonatype.org` snapshots repository to every build (harmless, slow lookups)
 - [ ] Optional, owner's call: publish from CI (GitHub secrets + a workflow on tags) and CodeQL — not implemented; CI only builds and tests
-- [ ] Exit check: the snapshot (then `1.4`) resolves from the Central Portal in a clean `~/.m2`; Orienteer's
-      "Stage A delivered" item can be ticked for wicket-console
+- [x] Exit check: the snapshot (then `1.4`) resolves from the Central Portal in a clean `~/.m2`; Orienteer's
+      "Stage A delivered" item can be ticked for wicket-console — 2026-09-28 (snapshot): a throwaway consumer pom whose
+      only extra repository is the Central Portal snapshots one, built with an empty `-Dmaven.repo.local` and an empty
+      settings file (so the owner's `settings.xml` profiles/mirrors can't help), resolved `wicket-console` and its parent
+      `1.4-SNAPSHOT` (build `1.4-20260928.231208-1`) from `central-portal-snapshots` and the 11 other runtime artifacts
+      (Wicket 8.15.0 and its deps, slf4j-api 1.7.25) from Central, and compiled a probe mirroring every orienteer-devutils
+      usage. Jar, `-sources` and `-javadoc` are **byte-identical (SHA-1)** to the deploy build in `wicket-console/target/`
+      (jar `a4ce5afe…`, also = the `~/.m2` install) and to the remote `.sha1` files; both POMs are identical to HEAD.
+      29 classes, all major 65; no script engine or logging binding on the consumer's runtime classpath. The `1.4`
+      release remains open (item above)
 
 ### Publishing runbook (owner only — D11)
 
@@ -292,14 +305,15 @@ Prerequisites (one-off; the first two are already true for `ru.ydn`, as wicket-o
 3. **GPG key (needed for `1.4`, not for snapshots):** `gpg --full-generate-key` (RSA 4096, `Ilia Naryzhny <phantom@ydn.ru>`),
    then `gpg --keyserver keyserver.ubuntu.com --send-keys <KEYID>`. The same key serves every `ru.ydn` library.
 
-Snapshot `1.4-SNAPSHOT` (now; repeat after every fix Orienteer P3 needs):
+Snapshot `1.4-SNAPSHOT` (first deployed 2026-09-28, build `1.4-20260928.231208-1`; repeat after every fix Orienteer P3
+needs, and **before ~2026-12-27** when the Central Portal deletes it, unless `1.4` is released by then):
 ```bash
 git switch master && git status                                         # clean tree at 1.4-SNAPSHOT (push first if CI should see it)
 ./mvnw -B clean deploy -Prelease -Dgpg.skip -Dcentral.server.id=ossrh   # -SNAPSHOT → Central Portal snapshots; demo excluded
 curl -s https://central.sonatype.com/repository/maven-snapshots/ru/ydn/wicket/wicket-console/wicket-console/1.4-SNAPSHOT/maven-metadata.xml
 ```
 Uploads: `wicket-console-parent` pom; `wicket-console` pom, jar, `-sources`, `-javadoc` (timestamped, unsigned). Snapshots
-are not validated and expire after 90 days. Once a GPG key exists, drop `-Dgpg.skip` to sign them too.
+are not validated and are deleted 90 days after upload. Once a GPG key exists, drop `-Dgpg.skip` to sign them too.
 
 Release `1.4` (only after Orienteer P3 is green against `1.4-SNAPSHOT` — D8):
 ```bash
@@ -410,17 +424,26 @@ javap -v -cp wicket-console/target/classes ru.ydn.wicket.wicketconsole.ScriptExe
 
 ## Handoff to Orienteer
 
-Stage A + phase R preparation, 2026-09-25. **Local only so far:** committed on the local `master` (not pushed), installed
-in `~/.m2` on this machine, **not published**. Until the owner deploys the snapshot (runbook, phase R) Orienteer resolves
-`1.4-SNAPSHOT` only from a local `./mvnw install` of this repo.
+Stage A + phase R, 2026-09-25; published 2026-09-28. **`1.4-SNAPSHOT` is published** to the Central Portal snapshots
+repository (build `1.4-20260928.231208-1`, deployed from `bd3a0cb` = `origin/master`, unsigned). Orienteer resolves it
+from there with the repository snippet in §5 (verified from an empty local repo, phase R exit check); no local install
+is needed any more. **The Central Portal deletes snapshots 90 days after upload, i.e. around 2026-12-27:** before then
+either redeploy (runbook, phase R; each redeploy creates a new timestamped build) or release `1.4` (after Orienteer P3
+is green, D8), or Orienteer's builds stop resolving it.
 
-### 1. Installed artifacts (`~/.m2/repository/ru/ydn/wicket/wicket-console/`)
+### 1. Published and installed artifacts
 
-| Coordinates | File |
+Central Portal snapshots (`https://central.sonatype.com/repository/maven-snapshots/ru/ydn/wicket/wicket-console/`),
+build `1.4-20260928.231208-1`, unsigned:
+
+| Coordinates | Published files |
 |---|---|
-| `ru.ydn.wicket.wicket-console:wicket-console-parent:1.4-SNAPSHOT:pom` | `wicket-console-parent/1.4-SNAPSHOT/wicket-console-parent-1.4-SNAPSHOT.pom` |
-| `ru.ydn.wicket.wicket-console:wicket-console:1.4-SNAPSHOT:jar` | `wicket-console/1.4-SNAPSHOT/wicket-console-1.4-SNAPSHOT.jar` (29 classes, ~38 KB) |
-| (demo, not for Orienteer) `wicket-console-demo:1.4-SNAPSHOT:war` | `wicket-console-demo/1.4-SNAPSHOT/` |
+| `ru.ydn.wicket.wicket-console:wicket-console-parent:1.4-SNAPSHOT:pom` | `.pom` |
+| `ru.ydn.wicket.wicket-console:wicket-console:1.4-SNAPSHOT:jar` | `.pom`, `.jar` (29 classes, 38805 bytes, SHA-1 `a4ce5afe79972389044b7042660042840a6ab615`), `-sources.jar`, `-javadoc.jar` |
+| `wicket-console-demo` | not published (404), by design |
+
+Locally in `~/.m2/repository/ru/ydn/wicket/wicket-console/` the same `1.4-SNAPSHOT` parent pom and jar (the deploy's
+`install` phase wrote the identical jar), plus the demo war (never published).
 
 - There is no test-jar (there never was one; Orienteer doesn't use one).
 - **Bytecode:** `--release 21`, every class file is major version **65**; the manifest says `Build-Jdk-Spec: 21`.
@@ -464,9 +487,10 @@ in `~/.m2` on this machine, **not published**. Until the owner deploys the snaps
 
 ### 5. Actions for Orienteer (P1/P3)
 
-1. Resolve `wicket-console:1.4-SNAPSHOT` (local install now; Central Portal snapshots after the owner's deploy).
-   Coordinates and version are unchanged, so `orienteer-devutils/pom.xml` needs no edit. Orienteer's root pom already
-   has the Central Portal snapshots repository (its P1, for wicket-orientdb); this parent pom declares no repositories:
+1. Resolve `wicket-console:1.4-SNAPSHOT` from the Central Portal snapshots repository (published 2026-09-28; drop any
+   reliance on a local install). Coordinates and version are unchanged, so `orienteer-devutils/pom.xml` needs no edit.
+   Orienteer's root pom already has this repository (its P1, for wicket-orientdb); this parent pom declares none.
+   Drop the repository once Orienteer switches to the `1.4` release:
    ```xml
    <repository>
      <id>central-portal-snapshots</id>
@@ -516,13 +540,15 @@ serves the home page and `WicketConsolePage` on both JDKs (Jetty 9.4.58), with G
 
 ### 10. What the owner needs to do to publish, and open questions
 
-1. **Review and push** the local commits on `master` (`git log origin/master..master`). CI (`.github/workflows/ci.yml`)
-   and Dependabot become active with the push. No GitHub settings or secrets are needed for CI.
-2. **Deploy the snapshot** (no GPG key needed): `./mvnw -B clean deploy -Prelease -Dgpg.skip -Dcentral.server.id=ossrh`
-   (runbook in phase R). Then Orienteer's P1 "3 missing POMs" drops to 2, and its "Stage A delivered" line can list wicket-console.
-3. **Later, for `1.4`:** a GPG key on a keyserver (shared by all `ru.ydn` libraries), then `release:prepare`/`perform`
+1. ~~Review and push~~ — done: `origin/master` = `bd3a0cb`; its CI run (JDK 21/25) succeeded on 2026-09-25, and
+   Dependabot is running.
+2. ~~Deploy the snapshot~~ — done 2026-09-28 (build `1.4-20260928.231208-1`), verified from an empty local repo.
+   Orienteer's P1 "3 missing POMs" drops to 2, and its "Stage A delivered" line can list wicket-console.
+3. **Before ~2026-12-27:** redeploy the snapshot (same command) unless `1.4` is released by then — the Central Portal
+   deletes snapshots after 90 days.
+4. **Later, for `1.4`:** a GPG key on a keyserver (shared by all `ru.ydn` libraries), then `release:prepare`/`perform`
    after Orienteer P3 is green (D8).
-4. Recommended: `chmod 600 ~/.m2/settings.xml` (plain-text tokens, currently world-readable); optionally a `central` server entry.
+5. Recommended: `chmod 600 ~/.m2/settings.xml` (plain-text tokens, currently world-readable); optionally a `central` server entry.
 
 Open questions (none blocks Stage A):
 - **Demo after Stage C:** keep it (Jetty 12 ee10 port) or drop it? (C)
@@ -535,7 +561,8 @@ Open questions (none blocks Stage A):
 
 What the owner's `release:perform` for `1.4` will upload, minus the `.asc` signatures (each file below also gets `.asc`
 when signed). Each file has `.md5`, `.sha1`, `.sha256` and `.sha512` next to it (20 checksum files); 25 entries in total.
-The demo is excluded. The snapshot deploy uploads the same 5 artifacts as timestamped `1.4-SNAPSHOT` builds.
+The demo is excluded. The snapshot deploy uploaded the same 5 artifacts as timestamped `1.4-SNAPSHOT` builds
+(confirmed 2026-09-28 on the snapshots repository: `1.4-20260928.231208-1` pom/jar/sources/javadoc + parent pom).
 
 | Size (bytes) | Path |
 |---|---|

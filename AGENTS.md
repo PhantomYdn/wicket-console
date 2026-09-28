@@ -34,8 +34,10 @@ in lockstep with it. Dormant from Oct 2020 to Sep 2026. Repo: `PhantomYdn/wicket
 
 ## Build status — read first
 
-- **Stage A done locally (2026-09-25):** `./mvnw clean verify` green on Temurin 21 and 25 (library 7 tests, demo 4),
-  no `--add-opens` needed; `./mvnw install` → jar + parent pom `1.4-SNAPSHOT`, class files major 65. Public API unchanged.
+- **Stage A done (2026-09-25) and published (2026-09-28):** `./mvnw clean verify` green on Temurin 21 and 25 (library
+  7 tests, demo 4), no `--add-opens` needed; class files major 65; public API unchanged. `1.4-SNAPSHOT` (jar + parent pom)
+  is on the Central Portal snapshots repo (build `1.4-20260928.231208-1`), which Orienteer resolves. Snapshots are
+  deleted after 90 days (~2026-12-27): the owner redeploys or releases `1.4` before then.
 - **Versions (plan D8):** `master` = Stage A = `1.4-SNAPSHOT`; `1.4` is released after Orienteer P3 is green. Then
   B = `1.5-SNAPSHOT`, C = `2.0-SNAPSHOT`. **Never build or install Stage B/C work as `1.4-SNAPSHOT`.**
 - Plugin versions live only in the root `<pluginManagement>`; enforcer requires Maven ≥ 3.9 and JDK ≥ 21, and bans
