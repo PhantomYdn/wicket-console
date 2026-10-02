@@ -44,7 +44,7 @@
 	<log4j.version>2.26.1</log4j.version>
 	<!-- GraalJS for the demo's JavaScript console only (the library ships no script engine, REFRESH_PLAN.md D4);
 	     same version as Orienteer (its D8) -->
-	<graalvm.version>25.0.4</graalvm.version>
+	<graalvm.version>25.0.4.1.1</graalvm.version>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<!-- Publishing (REFRESH_PLAN.md D8/D11): snapshots and releases go to Maven Central via the Central Portal -->
 	<central.snapshots.url>https://central.sonatype.com/repository/maven-snapshots/</central.snapshots.url>
