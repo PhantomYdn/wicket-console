@@ -39,7 +39,7 @@
     </licenses>
     <properties>
 	<maven.compiler.release>21</maven.compiler.release>
-	<wicket.version>8.15.0</wicket.version>
+	<wicket.version>8.20.0</wicket.version>
 	<jetty.version>9.4.58.v20250814</jetty.version>
 	<log4j.version>2.26.1</log4j.version>
 	<!-- GraalJS for the demo's JavaScript console only (the library ships no script engine, REFRESH_PLAN.md D4);
